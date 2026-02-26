@@ -73,21 +73,6 @@ export default function Register() {
 
   return (
     <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=DM+Sans:wght@300;400;500;600&display=swap');
-        .font-playfair { font-family: 'Playfair Display', serif; }
-        .font-dm { font-family: 'DM Sans', sans-serif; }
-        .marquee-track {
-          display: flex;
-          gap: 2rem;
-          animation: marquee 18s linear infinite;
-          white-space: nowrap;
-        }
-        @keyframes marquee {
-          from { transform: translateX(0); }
-          to { transform: translateX(-50%); }
-        }
-      `}</style>
 
       <div className="font-dm min-h-screen bg-zinc-100 flex items-center justify-center p-4">
         <div className="w-full max-w-5xl flex rounded-3xl overflow-hidden shadow-2xl shadow-black/20">
