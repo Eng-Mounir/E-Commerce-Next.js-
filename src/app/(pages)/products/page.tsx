@@ -1,6 +1,6 @@
 import React from 'react'
 import { fetchProducts } from '@/app/services/product.services'
-import { ProductI } from '@/app/interfaces/producti'
+import { ProductI } from '@/app/interfaces'
 import ProductCard from '@/app/_components/ProductCard'
 
 export default async function ProductPage() {

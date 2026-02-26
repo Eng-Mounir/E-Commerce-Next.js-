@@ -20,7 +20,7 @@ export default function Navbar() {
         {/* Left - Logo */}
         <div className="nav-logo text-2xl font-bold text-black flex items-center gap-3">
           <Avatar className='rounded-lg'>
-      <AvatarFallback className='rounded-lg bg-black text-white'>CN</AvatarFallback>
+      <AvatarFallback className='rounded-lg bg-black text-white'>C</AvatarFallback>
     </Avatar>
           <Link href="/">ShopMart</Link>
         </div>

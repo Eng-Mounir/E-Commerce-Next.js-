@@ -14,3 +14,18 @@ export async function fetchProducts() {
     return { data: [] };
   }
 }
+
+export async function fetchProductById(id: string) {
+  try {
+    const response = await fetch(`${API_URL}products/${id}`);
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Fetched product:', data);
+    return data;
+  } catch (error) {
+    console.error('Error fetching product:', error);
+    return null;
+  }
+}

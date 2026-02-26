@@ -3,13 +3,16 @@
 import { ShoppingCart, Heart } from 'lucide-react';
 import Image from 'next/image';
 import { Card } from '@/components/ui/card';
-import { Product } from '../interfaces/producti';
-
-type ProductProps = Product;
+import { ProductI } from '@/app/interfaces';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+
+type ProductProps = ProductI;
 
 export default function ProductCard({ product }: { product: ProductProps }) {
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const router = useRouter();
+
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }).map((_, i) => (
       <svg
@@ -23,19 +26,29 @@ export default function ProductCard({ product }: { product: ProductProps }) {
     ));
   };
 
+  const handleCardClick = () => {
+    router.push(`/products/${product._id}`);
+  };
+
   return (
-    <Card className="w-76 overflow-hidden hover:shadow-lg transition-shadow relative flex flex-col">
+    <Card 
+      onClick={handleCardClick}
+      className="w-76 overflow-hidden hover:shadow-lg transition-shadow relative flex flex-col cursor-pointer">
       {/* Product Image */}
       <div className="relative w-full h-72 bg-gray-200 overflow-hidden shrink-0">
         <Image
           src={product.imageCover}
           alt={product.title}
           fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
           className="object-cover hover:scale-105 transition-transform"
         />
         {/* Wishlist Icon */}
         <button
-          onClick={() => setIsWishlisted(!isWishlisted)}
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsWishlisted(!isWishlisted);
+          }}
           className="absolute top-3 right-3 bg-white rounded-full p-2 hover:bg-gray-100 transition-colors"
         >
           <Heart
@@ -68,7 +81,11 @@ export default function ProductCard({ product }: { product: ProductProps }) {
         <p className="text-2xl font-bold text-gray-900">EGP {product.price}</p>
 
         {/* Add to Cart Button */}
-        <button className="w-full bg-gray-900 text-white rounded-2xl py-2 px-3 flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors mt-auto">
+        <button 
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+          className="w-full bg-gray-900 text-white rounded-2xl py-2 px-3 flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors mt-auto">
           <ShoppingCart size={20} />
           <span className="text-sm font-medium">Add To Cart</span>
         </button>
