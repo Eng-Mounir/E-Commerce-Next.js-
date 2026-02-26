@@ -1,30 +1,25 @@
 "use client";
 import React from "react";
 import { useForm, Controller } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {registerSchema} from "@/lib/validationSchema/auth.schema";
 import {
-  UserPlus, User, Mail, Lock, Phone,
-  AlertCircle, ShoppingBag, Star, Package, Tag,
-  Eye, EyeOff
+  AlertCircle,
+  ShoppingBag,
+  Star,
+  Eye,
+  EyeOff,
+  UserPlus,
+  Package,
+  Tag,
+  User,
+  Mail,
+  Lock,
+  Phone,
 } from "lucide-react";
-
-const schema = z
-  .object({
-    name: z.string().min(2, "Name must be at least 2 characters"),
-    email: z.string().email("Invalid email address"),
-    password: z.string().min(6, "Password must be at least 6 characters"),
-    rePassword: z.string().min(6, "Password must be at least 6 characters"),
-    phone: z.string().optional(),
-  })
-  .refine((data) => data.password === data.rePassword, {
-    message: "Passwords must match",
-    path: ["rePassword"],
-  });
 
 function FormField({ label, icon: Icon, error, optional, children }) {
   return (
@@ -55,7 +50,7 @@ export default function Register() {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(registerSchema),
     defaultValues: { name: "", email: "", password: "", rePassword: "", phone: "" },
   });
 
@@ -98,7 +93,7 @@ export default function Register() {
         <div className="w-full max-w-5xl flex rounded-3xl overflow-hidden shadow-2xl shadow-black/20">
 
           {/* ── LEFT PANEL ── */}
-          <div className="hidden lg:flex flex-col w-[420px] shrink-0 bg-black relative overflow-hidden">
+          <div className="hidden lg:flex flex-col w-105 shrink-0 bg-black relative overflow-hidden">
             {/* Grid texture */}
             <div
               className="absolute inset-0 opacity-[0.04]"
@@ -140,7 +135,7 @@ export default function Register() {
                   </span>
                 </div>
                 <h2 className="font-playfair text-white text-4xl font-black leading-[1.05] tracking-tight mb-4">
-                  Shop the World's
+                  Shop the World&apos;s
                   <br />
                   <span className="italic text-white/50">Finest</span> Brands.
                 </h2>
@@ -273,7 +268,7 @@ export default function Register() {
                 control={control}
                 render={({ field }) => (
                   <FormField label="Phone" icon={Phone} error={errors.phone?.message} optional>
-                    <Input {...field} type="tel" placeholder="+1 (555) 000-0000" className={inputClass(!!errors.phone)} />
+                    <Input {...field} type="tel"placeholder="+20 10 1234 5678" className={inputClass(!!errors.phone)} />
                   </FormField>
                 )}
               />

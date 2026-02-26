@@ -77,7 +77,7 @@ export default function Login() {
         <div className="w-full max-w-4xl flex rounded-3xl overflow-hidden shadow-2xl shadow-black/20">
 
           {/* ── LEFT PANEL ── */}
-          <div className="hidden lg:flex flex-col w-[400px] shrink-0 bg-black relative overflow-hidden">
+          <div className="hidden lg:flex flex-col w-100 shrink-0 bg-black relative overflow-hidden">
             {/* Grid texture */}
             <div
               className="absolute inset-0 opacity-[0.04]"
