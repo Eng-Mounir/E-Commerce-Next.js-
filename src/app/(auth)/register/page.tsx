@@ -20,6 +20,7 @@ import {
   Lock,
   Phone,
 } from "lucide-react";
+import { signUpUser } from "@/services/auth.services";
 
 function FormField({ label, icon: Icon, error, optional, children }) {
   return (
@@ -60,8 +61,10 @@ export default function Register() {
     setShowPassword((prev) => !prev);
   };
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     console.log("Form Submitted", data);
+    const response = await signUpUser(data);
+    console.log("API Response:", response);
   };
 
   const inputClass = (hasError) =>

@@ -1,5 +1,5 @@
 import React from 'react'
-import { fetchProducts } from '@/app/services/product.services'
+import { fetchProducts } from '@/services/product.services'
 import { ProductI } from '@/app/interfaces'
 import ProductCard from '@/app/_components/ProductCard'
 

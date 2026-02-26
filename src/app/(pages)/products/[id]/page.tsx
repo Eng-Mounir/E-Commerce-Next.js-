@@ -1,19 +1,30 @@
 import { fetchProductById } from '@/services/product.services';
 import ImageCarousel from '@/app/_components/ImageCarousel';
 import Breadcrumb from '@/app/_components/Breadcrumb';
-import { ShoppingCart, Heart } from 'lucide-react';
+import { ShoppingCart, Heart, Star, Package, Truck, ShieldCheck, RotateCcw, Award, Sparkles, ChevronRight } from 'lucide-react';
 import { Card } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { Button } from '@/components/ui/button';
 import { ProductDetailPageProps } from '@/app/interfaces';
 
 export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
   const { id } = await params;
   const productData = await fetchProductById(id);
-  
+
   if (!productData || !productData.data) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p className="text-xl text-gray-500">Product not found</p>
-      </div>
+      <>
+        <div className="dm flex flex-col items-center justify-center min-h-[60vh] gap-4">
+          <div className="w-20 h-20 bg-zinc-100 rounded-3xl flex items-center justify-center">
+            <Package size={32} className="text-zinc-300" />
+          </div>
+          <h2 className="cg text-3xl font-bold text-zinc-900">Product Not Found</h2>
+          <p className="text-zinc-400 text-sm font-light">The product you're looking for doesn't exist or has been removed.</p>
+          <Button className="mt-2 h-11 px-7 bg-zinc-950 text-white font-bold rounded-xl gap-2">
+            <ChevronRight size={14} className="rotate-180" /> Back to Products
+          </Button>
+        </div>
+      </>
     );
   }
 
@@ -21,101 +32,170 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }).map((_, i) => (
-      <svg
+      <Star
         key={i}
-        className={`w-6 h-6 ${i < Math.round(rating) ? 'text-yellow-400' : 'text-gray-300'}`}
-        fill="currentColor"
-        viewBox="0 0 20 20"
-      >
-        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-      </svg>
+        size={15}
+        className={i < Math.round(rating) ? 'fill-amber-400 text-amber-400' : 'fill-zinc-200 text-zinc-200'}
+      />
     ));
   };
 
+  const inStock = product.quantity !== undefined && product.quantity > 0;
+
   return (
-    <div className="flex flex-col items-center py-8 gap-8">
-      {/* Breadcrumb Navigation */}
-      <Breadcrumb
-        items={[
-          { label: 'Home', href: '/' },
-          { label: 'Products', href: '/products' },
-          { label: product.title },
-        ]}
-      />
+    <>
 
-      <div className="flex items-center justify-center">
-        <Card className="w-full max-w-310 flex flex-row gap-6 p-6 border border-gray-200 rounded-2xl shadow-sm">
-        {/* Left Side - Product Image Carousel */}
-        <div className="shrink-0 w-99">
-          <ImageCarousel
-            images={product.images && product.images.length > 0 
-              ? [product.imageCover, ...product.images] 
-              : [product.imageCover]}
-            title={product.title}
-          />
+
+      <div className="dm bg-white min-h-screen">
+
+        {/* ── Breadcrumb bar ── */}
+        <div className="border-b border-zinc-100 bg-zinc-50">
+          <div className="max-w-7xl mx-auto px-6 lg:px-16 py-4">
+            <Breadcrumb
+              items={[
+                { label: 'Home', href: '/' },
+                { label: 'Products', href: '/products' },
+                { label: product.title },
+              ]}
+            />
+          </div>
         </div>
 
-        {/* Right Side - Product Details */}
-        <div className="flex flex-col gap-8 grow py-8">
-          {/* Brand */}
-          <div className="flex flex-col gap-2">
-            <p className="text-sm text-gray-500">{product.brand?.name || 'Brand'}</p>
-          </div>
+        {/* ── Main content ── */}
+        <div className="max-w-7xl mx-auto px-6 lg:px-16 py-12">
+          <Card className="border border-zinc-100 rounded-3xl shadow-sm overflow-hidden bg-white">
+            <div className="flex flex-col lg:flex-row">
 
-          {/* Title */}
-          <div className="flex flex-col gap-2">
-            <h1 className="text-2xl font-bold text-gray-900">{product.title}</h1>
-          </div>
+              {/* ── Left: Image carousel ── */}
+              <div className="a1 lg:w-120 shrink-0 bg-zinc-50 border-b lg:border-b-0 lg:border-r border-zinc-100 p-6 flex items-center justify-center">
+                <ImageCarousel
+                  images={product.images && product.images.length > 0
+                    ? [product.imageCover, ...product.images]
+                    : [product.imageCover]}
+                  title={product.title}
+                />
+              </div>
 
-          {/* Category */}
-          <div className="flex flex-col gap-2">
-            <p className="text-base text-gray-600">{product.category?.name || 'Category'}</p>
-          </div>
+              {/* ── Right: Product details ── */}
+              <div className="flex flex-col flex-1 p-8 lg:p-10 gap-0">
 
-          {/* Rating */}
-          <div className="flex items-center gap-4">
-            <div className="flex gap-1">
-              {renderStars(product.ratingsAverage)}
+                {/* Brand + badges row */}
+                <div className="a1 flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-bold tracking-[.18em] uppercase text-zinc-400">
+                      {product.brand?.name || 'Brand'}
+                    </span>
+                    <span className="text-zinc-200">·</span>
+                    <span className="text-[10px] font-bold tracking-[.15em] uppercase text-zinc-400">
+                      {product.category?.name || 'Category'}
+                    </span>
+                  </div>
+                  <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold tracking-wide uppercase ${
+                    inStock ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-600 border border-red-200'
+                  }`}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${inStock ? 'bg-green-500' : 'bg-red-500'}`} />
+                    {inStock ? 'In Stock' : 'Out of Stock'}
+                  </div>
+                </div>
+
+                {/* Title */}
+                <div className="a2 mb-5">
+                  <h1 className="cg text-[clamp(2rem,3.5vw,3rem)] font-bold text-zinc-900 leading-tight tracking-tight">
+                    {product.title}
+                  </h1>
+                </div>
+
+                {/* Rating */}
+                <div className="a2 flex items-center gap-3 mb-6">
+                  <div className="flex items-center gap-0.5">
+                    {renderStars(product.ratingsAverage)}
+                  </div>
+                  <span className="text-sm font-bold text-zinc-700">{product.ratingsAverage?.toFixed(1)}</span>
+                  <span className="text-sm text-zinc-400 font-light">({product.ratingsQuantity} reviews)</span>
+                </div>
+
+                <Separator className="mb-6 bg-zinc-100" />
+
+                {/* Description */}
+                <div className="a3 mb-6">
+                  <p className="text-[10px] font-bold tracking-[.15em] uppercase text-zinc-400 mb-2">About this product</p>
+                  <p className="text-zinc-600 text-[15px] leading-relaxed font-light">
+                    {product.description || 'No description available.'}
+                  </p>
+                </div>
+
+                {/* Trust pills */}
+                <div className="a3 flex flex-wrap gap-2 mb-8">
+                  {[
+                    { icon: Truck,       label: "Free Shipping"   },
+                    { icon: RotateCcw,   label: "30-Day Returns"  },
+                    { icon: ShieldCheck, label: "Secure Payment"  },
+                    { icon: Award,       label: "Genuine Product" },
+                  ].map(({ icon: Icon, label }) => (
+                    <div key={label} className="flex items-center gap-1.5 bg-zinc-50 border border-zinc-100 rounded-full px-3 py-1.5">
+                      <Icon size={11} className="text-zinc-500" />
+                      <span className="text-[10px] font-semibold text-zinc-500 tracking-wide">{label}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Price block */}
+                <div className="a4 bg-zinc-50 border border-zinc-100 rounded-2xl p-5 mb-6">
+                  <div className="flex items-end justify-between">
+                    <div>
+                      <p className="text-[10px] font-bold tracking-[.15em] uppercase text-zinc-400 mb-1">Price</p>
+                      <p className="cg text-[2.8rem] font-bold text-zinc-900 leading-none">
+                        EGP {product.price}
+                      </p>
+                    </div>
+                    {product.quantity !== undefined && product.quantity > 0 && product.quantity <= 10 && (
+                      <div className="flex items-center gap-1.5 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2">
+                        <Sparkles size={11} className="text-amber-600" />
+                        <span className="text-[11px] font-bold text-amber-700">Only {product.quantity} left</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Action buttons */}
+                <div className="a5 flex items-center gap-3">
+                  <button className="lift flex-1 h-13 bg-zinc-950 hover:bg-zinc-800 text-white rounded-2xl flex items-center justify-center gap-2.5 font-bold text-sm tracking-wide transition-colors">
+                    <ShoppingCart size={18} />
+                    Add to Cart
+                  </button>
+                  <button className="wish-btn h-13 w-13 border-2 border-zinc-200 rounded-2xl flex items-center justify-center transition-all">
+                    <Heart size={20} className="text-zinc-500" />
+                  </button>
+                </div>
+
+                {/* Stock info */}
+                {product.quantity !== undefined && (
+                  <div className="a5 mt-5 pt-5 border-t border-zinc-100">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-zinc-400 font-medium">Availability</span>
+                      <span className={`font-bold ${inStock ? 'text-green-600' : 'text-red-500'}`}>
+                        {inStock ? `${product.quantity} units in stock` : 'Out of stock'}
+                      </span>
+                    </div>
+                    {/* Stock progress bar */}
+                    {inStock && (
+                      <div className="mt-2 h-1.5 bg-zinc-100 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-zinc-900 rounded-full transition-all"
+                          style={{ width: `${Math.min((product.quantity / 100) * 100, 100)}%` }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                )}
+
+              </div>
             </div>
-            <span className="text-sm text-gray-500">({product.ratingsQuantity} reviews)</span>
-          </div>
-
-          {/* Description */}
-          <div className="flex flex-col gap-2">
-            <p className="text-base text-gray-700 leading-relaxed">
-              {product.description || 'No description available'}
-            </p>
-          </div>
-
-          {/* Price */}
-          <div className="flex flex-col gap-2">
-            <p className="text-3xl font-bold text-gray-900">EGP {product.price}</p>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex flex-row gap-3 items-center">
-            <button className="flex-1 bg-gray-900 text-white rounded-lg px-4 py-3 flex items-center justify-center gap-3 hover:bg-gray-800 transition-colors font-medium">
-              <ShoppingCart size={20} />
-              <span>Add to Cart</span>
-            </button>
-            <button className="bg-white border border-gray-300 rounded-lg p-3 hover:bg-gray-50 transition-colors">
-              <Heart size={24} className="text-gray-600" />
-            </button>
-          </div>
-
-          {/* Stock Info */}
-          {product.quantity !== undefined && (
-            <div className="flex flex-col gap-2 pt-4 border-t border-gray-200">
-              <p className="text-sm text-gray-600">
-                Stock: <span className={product.quantity > 0 ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'}>
-                  {product.quantity > 0 ? `${product.quantity} in stock` : 'Out of stock'}
-                </span>
-              </p>
-            </div>
-          )}
+          </Card>
         </div>
-      </Card>
+
+
       </div>
-    </div>
+    </>
   );
 }

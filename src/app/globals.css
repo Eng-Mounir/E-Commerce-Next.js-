@@ -16,6 +16,7 @@
    Theme Variables
 ========================== */
 @theme inline {
+  /* Border radius sizes */
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -24,6 +25,7 @@
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
 
+  /* Color system */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -61,11 +63,10 @@
    Light & Dark Mode Colors
 ========================== */
 :root { 
-  /* ... all light mode variables ... */
+  /* Add your light mode variables here */
 }
-
 .dark { 
-  /* ... all dark mode variables ... */
+  /* Add your dark mode variables here */
 }
 
 /* ==========================
@@ -80,55 +81,75 @@
 /* ==========================
    Fonts
 ========================== */
-.cg, .font-playfair { font-family: 'Cormorant Garamond', serif; }
-.dm, .font-dm { font-family: 'DM Sans', sans-serif; }
+.cg, .font-playfair { font-family: 'Cormorant Garamond', serif; } /* For headings / elegant text */
+.dm, .font-dm { font-family: 'DM Sans', sans-serif; }               /* For body text / general UI */
 
 /* ==========================
    Animations
 ========================== */
-@keyframes fadeUp { from { opacity:0; transform:translateY(28px); } to { opacity:1; transform:translateY(0); } }
-@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
-@keyframes slideR { from { opacity:0; transform:translateX(-20px); } to { opacity:1; transform:translateX(0); } }
-@keyframes floatA { 0%,100%{ transform:translateY(0) rotate(-2deg); } 50%{ transform:translateY(-14px) rotate(-2deg); } }
-@keyframes floatB { 0%,100%{ transform:translateY(0) rotate(3deg); } 50%{ transform:translateY(-10px) rotate(3deg); } }
-@keyframes spin { from{ transform:rotate(0deg); } to{ transform:rotate(360deg); } }
-@keyframes marquee { from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
-@keyframes shimmer { 0%{ background-position:-200% 0; } 100%{ background-position:200% 0; } }
-@keyframes pulse2 { 0%,100%{ box-shadow:0 0 0 0 rgba(34,197,94,.4); } 70%{ box-shadow:0 0 0 8px rgba(34,197,94,0); } }
+@keyframes fadeUp { from { opacity:0; transform:translateY(28px); } to { opacity:1; transform:translateY(0); } } /* Fade in from bottom */
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } } /* Simple fade */
+@keyframes slideR { from { opacity:0; transform:translateX(-20px); } to { opacity:1; transform:translateX(0); } } /* Slide from left */
+@keyframes floatA { 0%,100%{ transform:translateY(0) rotate(-2deg); } 50%{ transform:translateY(-14px) rotate(-2deg); } } /* Floating element A */
+@keyframes floatB { 0%,100%{ transform:translateY(0) rotate(3deg); } 50%{ transform:translateY(-10px) rotate(3deg); } } /* Floating element B */
+@keyframes spin { from{ transform:rotate(0deg); } to{ transform:rotate(360deg); } } /* Spinning */
+@keyframes marquee { from{ transform:translateX(0); } to{ transform:translateX(-50%); } } /* Scrolling text */
+@keyframes shimmer { 0%{ background-position:-200% 0; } 100%{ background-position:200% 0; } } /* Skeleton loading shimmer */
+@keyframes pulse2 { 0%,100%{ box-shadow:0 0 0 0 rgba(34,197,94,.4); } 70%{ box-shadow:0 0 0 8px rgba(34,197,94,0); } } /* Pulsing dot */
 
 /* ==========================
    Animation Classes
 ========================== */
-.a1 { animation: fadeUp .7s cubic-bezier(.16,1,.3,1) .05s both; }
+.a1 { animation: fadeUp .7s cubic-bezier(.16,1,.3,1) .05s both; } /* Staggered fadeUp */
 .a2 { animation: fadeUp .7s cubic-bezier(.16,1,.3,1) .18s both; }
 .a3 { animation: fadeUp .7s cubic-bezier(.16,1,.3,1) .30s both; }
 .a4 { animation: fadeUp .7s cubic-bezier(.16,1,.3,1) .42s both; }
 .a5 { animation: fadeUp .7s cubic-bezier(.16,1,.3,1) .54s both; }
 .aR { animation: slideR .8s cubic-bezier(.16,1,.3,1) .3s both; }
-.af { animation: fadeIn 1s ease .1s both; }
-.fa { animation: floatA 5s ease-in-out infinite; }
+.af { animation: fadeIn 1s ease .1s both; } 
+.fa { animation: floatA 5s ease-in-out infinite; } /* Floating animations for icons or images */
 .fb { animation: floatB 6s ease-in-out infinite 1s; }
-.sp { animation: spin 14s linear infinite; }
-.mq, .marquee-track { display:flex; gap:2rem; animation: marquee 18s linear infinite; white-space: nowrap; }
-.pulse-dot { animation: pulse2 2s infinite; }
+.sp { animation: spin 14s linear infinite; } /* Spinning icons or elements */
+.mq, .marquee-track { display:flex; gap:2rem; animation: marquee 18s linear infinite; white-space: nowrap; } /* Marquee / news ticker */
+.pulse-dot { animation: pulse2 2s infinite; } /* Notification dot / pulsing effect */
 
 /* ==========================
    Hover Effects & Utilities
 ========================== */
-.lift { transition: transform .22s ease, box-shadow .22s ease; }
+.lift { transition: transform .22s ease, box-shadow .22s ease; } /* Lift card effect */
 .lift:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(0,0,0,.13); }
 .lift:active { transform: translateY(0); }
 
-.card-hover { transition: all .25s cubic-bezier(.16,1,.3,1); }
+.card-hover { transition: all .25s cubic-bezier(.16,1,.3,1); } /* Card hover effect */
 .card-hover:hover { transform: translateY(-6px); box-shadow: 0 24px 60px rgba(0,0,0,.12); }
 
-.cat-hover { transition: all .2s ease; }
+.cat-hover { transition: all .2s ease; } /* Category / small card hover */
 .cat-hover:hover { transform: scale(1.03); box-shadow: 0 12px 32px rgba(0,0,0,.1); }
 
-.diagonal { clip-path: polygon(0 0, 100% 0, 100% 78%, 0 100%); }
-.shimmer-card { background: linear-gradient(90deg, #f4f4f4 25%, #ebebeb 50%, #f4f4f4 75%); background-size: 200% 100%; }
-.text-gradient { background: linear-gradient(135deg, #000 30%, #666); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-.section-divider { width: 40px; height: 2px; background: #000; display: block; margin: 0; }
-.prod-img { background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%); }
-.testi-border { border: 1px solid #e5e5e5; }
+.pc-root { transition: all .28s cubic-bezier(.16,1,.3,1); } /* Product card root */
+.pc-root:hover { transform: translateY(-6px); box-shadow: 0 24px 56px rgba(0,0,0,.13); }
+.pc-img img { transition: transform .5s cubic-bezier(.16,1,.3,1) !important; }
+.pc-root:hover .pc-img img { transform: scale(1.07) !important; } /* Product image zoom on hover */
+.pc-actions { transition: opacity .2s ease, transform .2s ease; opacity: 0; transform: translateY(6px); } 
+.pc-root:hover .pc-actions { opacity: 1; transform: translateY(0); } /* Product actions appear on hover */
+
+.cart-btn { transition: all .18s ease; } /* Add to cart button */
+.cart-btn:hover { background: #27272a; transform: translateY(-1px); }
+.cart-btn:active { transform: translateY(0); }
+
+.wish-btn { transition: all .18s ease; } /* Wishlist button */
+.wish-btn:hover { transform: scale(1.08); background: #fef2f2; border-color: #fca5a5; }
+
+.diagonal { clip-path: polygon(0 0, 100% 0, 100% 78%, 0 100%); } /* Diagonal section / hero background */
+.shimmer-card { background: linear-gradient(90deg, #f4f4f4 25%, #ebebeb 50%, #f4f4f4 75%); background-size: 200% 100%; } /* Skeleton shimmer */
+.text-gradient { background: linear-gradient(135deg, #000 30%, #666); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; } /* Gradient text */
+.section-divider, .section-rule { width: 40px; height: 2px; background: #000; display: block; } /* Divider line */
+.prod-img { background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%); } /* Product placeholder image */
+.testi-border { border: 1px solid #e5e5e5; } /* Testimonial card border */
 .testi-border:hover { border-color: #000; }
+
+/* Timeline dot */
+.timeline-dot::before{
+  content:'';position:absolute;left:50%;top:0;bottom:0;
+  width:1px;background:#e5e5e5;transform:translateX(-50%);z-index:0;
+}
