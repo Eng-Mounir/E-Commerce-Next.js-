@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { NavigationMenu, NavigationMenuItem } from "@/components/ui/navigation-menu"
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
-import { User } from 'lucide-react'
+import { User, Heart } from 'lucide-react'
 export default function Navbar() {
     const pathname = usePathname();
 
@@ -52,7 +52,13 @@ export default function Navbar() {
         </div>
       
         {/* Right - Navigation actions */}
-      <div className="nav-action">
+        <div className="nav-action flex items-center gap-4">
+          {/* Wishlist Icon */}
+          <Link href="/wishlist" className="text-gray-700 hover:text-black transition">
+            <Heart size={24} />
+          </Link>
+          
+          {/* User Dropdown */}
         <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="rounded-full">
@@ -73,7 +79,7 @@ export default function Navbar() {
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
-      </div>
+        </div>
       </div>
     </nav>
   )

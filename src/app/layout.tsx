@@ -26,13 +26,13 @@ export default function RootLayout({
 }: Readonly<RootLayoutProps>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <Navbar />
-        {children}
-        <Footer />
-      </body>
+<body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+  <Navbar />
+  <main className="min-h-screen space-y-8 py-8">
+    {children}
+  </main>
+  <Footer />
+</body>
     </html>
   );
 }
