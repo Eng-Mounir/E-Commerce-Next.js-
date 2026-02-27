@@ -106,12 +106,13 @@ export default function Login() {
       callbackUrl: "/",
     });
     console.log(result);
-    if (result?.error) {
-      toast.error("Invalid credentials.");
-    } else {
+    if (result?.ok) {
       toast.success("Welcome back!");
       router.push("/");
+    } else {
+      toast.error(result?.error || "Invalid credentials.");
     }
+      
   };
 
   const inputClass = (hasError: boolean) =>

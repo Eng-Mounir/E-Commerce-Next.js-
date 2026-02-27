@@ -23,19 +23,14 @@ async authorize(credentials) {
     console.log("SIGNIN STATUS:", status);
     console.log("SIGNIN DATA:", data);
     console.log("Credentials received:", credentials);
-     if (status !== 200 || data.message !== "success") {
-        
-  return null;
-}
-    if (status === 200 && data.success) {
+
+    if (status === 200 && data.message === "success") {
       const decodedToken: decodedTokenType = jwtDecode(data.token);
       return {
         id: decodedToken.id,
         user: data.user,
         token: data.token,
       };
-      
-      
     } else {
       console.log("Authorization failed:", data.message || "Invalid credentials");
       return null; // NextAuth will redirect to error page
@@ -53,5 +48,23 @@ async authorize(credentials) {
     // jwt:{
     //     secret: process.env.NEXTAUTH_SECRET,
     // },
+callbacks: {
+  async jwt({ token, user }) {
+    if (user) {
+      token.id = user.id;
+      token.user = user.user;
+      token.accessToken = user.token;
+    }
+    return token;
+  },
+
+  async session({ session, token }) {
+    if (session) {
+      session.user = token.user;
+      session.accessToken = token.accessToken;
+    }
+    return session;
+  }
+}
 }
 export default authOptions;
