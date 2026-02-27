@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { ReactNode } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -19,10 +19,21 @@ import {
   Mail,
   Lock,
   Phone,
+  LucideIcon,
 } from "lucide-react";
 import { signUpUser } from "@/services/auth.services";
-
-function FormField({ label, icon: Icon, error, optional, children }) {
+import { Spinner } from "@/components/ui/spinner";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+type FormFieldProps = {
+  icon?: LucideIcon;
+  error?: string;
+  optional?: boolean;
+  children: ReactNode;
+  label: string;
+};
+function FormField({ icon: Icon, error, optional, children, label }: FormFieldProps) {
   return (
     <div className="space-y-1.5">
       <Label className="text-[10px] font-bold tracking-[0.15em] uppercase text-zinc-400 flex items-center gap-1.5">
@@ -46,12 +57,14 @@ function FormField({ label, icon: Icon, error, optional, children }) {
 }
 
 export default function Register() {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
+  const router = useRouter();
+const {
+  control,
+  handleSubmit,
+  formState: { errors, isSubmitting },
+} = useForm({
     resolver: zodResolver(registerSchema),
+    mode:"all",
     defaultValues: { name: "", email: "", password: "", rePassword: "", phone: "" },
   });
 
@@ -65,6 +78,12 @@ export default function Register() {
     console.log("Form Submitted", data);
     const response = await signUpUser(data);
     console.log("API Response:", response);
+    if (response.message ==="success") {
+      toast.success("Account created successfully!");
+      router.push("/login");
+    } else {
+      toast.error("Failed to create account. Please try again.");
+    }
   };
 
   const inputClass = (hasError) =>
@@ -266,6 +285,7 @@ export default function Register() {
                   type="submit"
                   className="w-full h-12 bg-black hover:bg-zinc-800 text-white font-bold text-sm rounded-xl flex items-center justify-center gap-2 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.18)] active:translate-y-0 tracking-wide"
                 >
+                  {isSubmitting ? <Spinner size={15} /> : null}
                   <UserPlus size={15} />
                   Create Account
                 </Button>
@@ -273,9 +293,9 @@ export default function Register() {
 
               <p className="text-center text-xs text-zinc-400 pt-0.5">
                 Already have an account?{" "}
-                <a href="#" className="text-black font-semibold hover:underline transition-colors">
+                <Link href="/login" className="text-black font-semibold hover:underline transition-colors">
                   Sign in
-                </a>
+                </Link>
               </p>
             </form>
 

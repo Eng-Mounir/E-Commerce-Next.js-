@@ -113,7 +113,7 @@ export default function AboutPage() {
 
               <div className="a2 mb-6">
                 <h1 className="cg text-[clamp(3.5rem,6vw,6rem)] font-bold text-black leading-[.95] tracking-tight">
-                  We're on a<br/>
+                  We are on a<br/>
                   Mission to<br/>
                   <span className="italic text-zinc-400">Redefine</span><br/>
                   Commerce<span className="text-zinc-200">.</span>
@@ -176,9 +176,9 @@ export default function AboutPage() {
               <span className="text-[11px] font-bold tracking-[.16em] uppercase text-zinc-400">Our Mission</span>
             </div>
             <blockquote className="cg text-[clamp(2rem,4.5vw,3.8rem)] font-bold text-zinc-900 leading-[1.05] tracking-tight mb-8">
-              "To make premium shopping <span className="italic text-zinc-400">accessible</span>,
+              To make premium shopping <span className="italic text-zinc-400">accessible</span>,
               effortless, and genuinely <span className="italic text-zinc-400">enjoyable</span>
-              — for everyone, everywhere."
+              — for everyone, everywhere.
             </blockquote>
             <Separator className="max-w-15 mx-auto bg-zinc-900 h-0.5 mb-8"/>
             <p className="text-zinc-500 text-[16px] leading-relaxed font-light max-w-2xl mx-auto">
