@@ -6,6 +6,8 @@ import { Card } from '@/components/ui/card';
 import { ProductI } from '@/app/interfaces';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { addToCart } from '@/app/actions/cart.action';
+
 
 type ProductProps = ProductI;
 
@@ -27,6 +29,14 @@ export default function ProductCard({ product }: { product: ProductProps }) {
     router.push(`/products/${product._id}`);
   };
 
+  async function handleAddToCart(productId: string) {
+    try {
+      await addToCart(productId, 1);
+      console.log("Product added to cart successfully", productId);
+    } catch (err) {
+      console.error(err);
+    }
+  }
   return (
     <>
 
@@ -102,7 +112,7 @@ export default function ProductCard({ product }: { product: ProductProps }) {
             </div>
 
             <button
-              onClick={(e) => { e.stopPropagation(); }}
+              onClick={(e) => { e.stopPropagation(); handleAddToCart(product._id); }}
               className="cart-btn w-11 h-11 bg-zinc-950 rounded-2xl flex items-center justify-center shadow-sm"
             >
               <ShoppingCart size={17} className="text-white" />
@@ -112,7 +122,7 @@ export default function ProductCard({ product }: { product: ProductProps }) {
           {/* Hover: full Add to Cart bar */}
           <div className="pc-actions">
             <button
-              onClick={(e) => { e.stopPropagation(); }}
+              onClick={(e) => { e.stopPropagation(); handleAddToCart(product._id); }}
               className="cart-btn w-full h-10 bg-zinc-950 hover:bg-zinc-800 text-white rounded-xl flex items-center justify-center gap-2 text-[12px] font-bold tracking-wide mt-1"
             >
               <ShoppingCart size={14} />
