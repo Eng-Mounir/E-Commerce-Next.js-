@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useSession } from 'next-auth/react'
 import {
   Trash2, ShoppingBag, ArrowLeft, Plus, Minus,
   ShoppingCart, Sparkles, PackageX, ArrowRight
@@ -12,71 +11,16 @@ import {
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { toast } from 'sonner'
+import {
+  getLoggedUserCart,
+  removeCartItem,
+  clearUserCart,
+  updateCartQuantity,
+} from '@/actions/cart.action'
+import { Cart } from '@/app/interfaces/cart'
 
-/* ── Types ── */
-interface CartProduct {
-  count: number
-  _id: string
-  product: {
-    _id: string
-    title: string
-    imageCover: string
-    price: number
-    brand?: { name: string }
-    category?: { name: string }
-  }
-  price: number
-}
-
-interface Cart {
-  _id: string
-  products: CartProduct[]
-  totalCartPrice: number
-}
-
-/* ── API helpers (replace with your actual service calls) ── */
-async function fetchCart(token: string): Promise<Cart | null> {
-  const res = await fetch('https://ecommerce.routemisr.com/api/v1/cart', {
-    headers: { token },
-    cache: 'no-store',
-  })
-  const data = await res.json()
-  return data?.status === 'success' ? data.data : null
-}
-
-async function removeItem(productId: string, token: string): Promise<Cart | null> {
-  const res = await fetch(`https://ecommerce.routemisr.com/api/v1/cart/${productId}`, {
-    method: 'DELETE',
-    headers: { token },
-  })
-  const data = await res.json()
-  return data?.status === 'success' ? data.data : null
-}
-
-async function clearCart(token: string): Promise<boolean> {
-  const res = await fetch('https://ecommerce.routemisr.com/api/v1/cart', {
-    method: 'DELETE',
-    headers: { token },
-  })
-  const data = await res.json()
-  return data?.message === 'success'
-}
-
-async function updateQuantity(productId: string, count: number, token: string): Promise<Cart | null> {
-  const res = await fetch(`https://ecommerce.routemisr.com/api/v1/cart/${productId}`, {
-    method: 'PUT',
-    headers: { token, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ count }),
-  })
-  const data = await res.json()
-  return data?.status === 'success' ? data.data : null
-}
-
-/* ── Cart Page ── */
 export default function CartPage() {
   const router = useRouter()
-  const { data: session } = useSession()
-  const token = (session as any)?.accessToken as string
 
   const [cart, setCart] = useState<Cart | null>(null)
   const [loading, setLoading] = useState(true)
@@ -84,17 +28,18 @@ export default function CartPage() {
   const [updating, setUpdating] = useState<string | null>(null)
   const [clearing, setClearing] = useState(false)
 
+  /* ── Fetch on mount ── */
   useEffect(() => {
-    if (!token) return
-    fetchCart(token).then(data => {
+    getLoggedUserCart().then(data => {
       setCart(data)
       setLoading(false)
     })
-  }, [token])
+  }, [])
 
+  /* ── Remove single item ── */
   async function handleRemove(productId: string, cartItemId: string) {
     setRemoving(cartItemId)
-    const updated = await removeItem(productId, token)
+    const updated = await removeCartItem(productId)
     if (updated) {
       setCart(updated)
       toast.success('Item removed from cart')
@@ -104,9 +49,10 @@ export default function CartPage() {
     setRemoving(null)
   }
 
+  /* ── Clear all ── */
   async function handleClear() {
     setClearing(true)
-    const ok = await clearCart(token)
+    const ok = await clearUserCart()
     if (ok) {
       setCart(null)
       toast.success('Cart cleared')
@@ -116,11 +62,12 @@ export default function CartPage() {
     setClearing(false)
   }
 
+  /* ── Update quantity ── */
   async function handleQuantity(productId: string, cartItemId: string, current: number, delta: number) {
     const next = current + delta
     if (next < 1) return
     setUpdating(cartItemId)
-    const updated = await updateQuantity(productId, next, token)
+    const updated = await updateCartQuantity(productId, next)
     if (updated) setCart(updated)
     else toast.error('Failed to update quantity')
     setUpdating(null)
@@ -130,44 +77,6 @@ export default function CartPage() {
 
   return (
     <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=DM+Sans:wght@300;400;500;600&display=swap');
-        .cg { font-family: 'Cormorant Garamond', serif; }
-        .dm { font-family: 'DM Sans', sans-serif; }
-
-        @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
-        @keyframes fadeIn { from{opacity:0} to{opacity:1} }
-        @keyframes spin   { to{transform:rotate(360deg)} }
-        @keyframes slideOut { to{opacity:0;transform:translateX(40px);max-height:0;padding:0;margin:0} }
-
-        .a1{animation:fadeUp .5s cubic-bezier(.16,1,.3,1) .05s both}
-        .a2{animation:fadeUp .5s cubic-bezier(.16,1,.3,1) .12s both}
-        .a3{animation:fadeUp .5s cubic-bezier(.16,1,.3,1) .20s both}
-
-        .cart-item { transition: all .25s cubic-bezier(.16,1,.3,1); }
-        .cart-item:hover { background: #fafafa; }
-
-        .qty-btn {
-          width:28px; height:28px; border-radius:50%;
-          display:flex; align-items:center; justify-content:center;
-          border: 1.5px solid #e4e4e7;
-          transition: all .15s ease; cursor:pointer; background:white;
-        }
-        .qty-btn:hover:not(:disabled) { border-color:#09090b; background:#09090b; color:white; }
-        .qty-btn:disabled { opacity:.4; cursor:not-allowed; }
-
-        .remove-btn { transition: all .18s ease; }
-        .remove-btn:hover { background:#fff1f2; color:#ef4444; transform:scale(1.05); }
-
-        .lift { transition: transform .2s ease, box-shadow .2s ease; }
-        .lift:hover { transform:translateY(-2px); box-shadow:0 10px 28px rgba(0,0,0,.13); }
-
-        .spinner { animation:spin .7s linear infinite; }
-
-        .img-wrap { transition: transform .25s cubic-bezier(.16,1,.3,1); }
-        .cart-item:hover .img-wrap { transform: scale(1.04); }
-      `}</style>
-
       <div className="dm bg-white min-h-screen">
 
         {/* ── Header ── */}
@@ -231,8 +140,6 @@ export default function CartPage() {
 
               {/* ── Items list ── */}
               <div className="flex-1 min-w-0">
-
-                {/* List header */}
                 <div className="flex items-center justify-between mb-4">
                   <p className="text-[11px] font-bold tracking-[.16em] uppercase text-zinc-400">
                     {cart.products.length} Item{cart.products.length > 1 ? 's' : ''}
@@ -300,7 +207,7 @@ export default function CartPage() {
                             <Minus size={11} />
                           </button>
 
-                          <span className={`w-6 text-center text-[14px] font-bold text-zinc-900 ${isUpdating ? 'opacity-40' : ''}`}>
+                          <span className="w-6 text-center text-[14px] font-bold text-zinc-900">
                             {isUpdating
                               ? <span className="block w-3 h-3 border border-zinc-400 border-t-transparent rounded-full spinner mx-auto" />
                               : item.count
@@ -339,7 +246,6 @@ export default function CartPage() {
                   })}
                 </div>
 
-                {/* Continue shopping */}
                 <Link
                   href="/products"
                   className="inline-flex items-center gap-2 text-[13px] font-semibold text-zinc-500 hover:text-zinc-900 transition-colors mt-6"
@@ -351,8 +257,6 @@ export default function CartPage() {
               {/* ── Order summary ── */}
               <div className="a3 w-full lg:w-80 shrink-0">
                 <div className="border border-zinc-100 rounded-3xl overflow-hidden sticky top-20">
-
-                  {/* Summary header */}
                   <div className="bg-zinc-950 px-6 py-5">
                     <p className="text-[10px] font-bold tracking-[.18em] uppercase text-white/40 mb-1">Order Summary</p>
                     <p className="cg text-3xl font-bold text-white leading-none">
@@ -361,7 +265,6 @@ export default function CartPage() {
                   </div>
 
                   <div className="p-6 bg-white">
-                    {/* Line items */}
                     <div className="space-y-3 mb-4">
                       {cart.products.map(item => (
                         <div key={item._id} className="flex items-center justify-between text-sm">
@@ -377,7 +280,6 @@ export default function CartPage() {
 
                     <Separator className="my-4 bg-zinc-100" />
 
-                    {/* Shipping */}
                     <div className="flex items-center justify-between text-sm mb-2">
                       <span className="text-zinc-500">Shipping</span>
                       <span className="text-green-600 font-semibold text-xs bg-green-50 px-2 py-0.5 rounded-full">Free</span>
@@ -385,7 +287,6 @@ export default function CartPage() {
 
                     <Separator className="my-4 bg-zinc-100" />
 
-                    {/* Total */}
                     <div className="flex items-end justify-between mb-6">
                       <div>
                         <p className="text-[10px] font-bold tracking-[.15em] uppercase text-zinc-400 mb-0.5">Total</p>
@@ -396,7 +297,6 @@ export default function CartPage() {
                       <p className="text-[10px] text-zinc-400 font-light pb-1">incl. VAT</p>
                     </div>
 
-                    {/* Checkout CTA */}
                     <Button
                       onClick={() => router.push('/checkout')}
                       className="lift w-full h-12 bg-zinc-950 hover:bg-zinc-800 text-white font-bold text-sm rounded-2xl gap-2 border-0 tracking-wide"
@@ -416,7 +316,6 @@ export default function CartPage() {
             </div>
           </div>
         )}
-
       </div>
     </>
   )

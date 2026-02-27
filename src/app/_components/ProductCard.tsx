@@ -6,7 +6,9 @@ import { Card } from '@/components/ui/card';
 import { ProductI } from '@/app/interfaces';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { addToCart } from '@/app/actions/cart.action';
+import { addToCart } from '@/actions/cart.action';
+import { Spinner } from '@/components/ui/spinner';
+import { toast } from 'sonner';
 
 
 type ProductProps = ProductI;
@@ -29,12 +31,21 @@ export default function ProductCard({ product }: { product: ProductProps }) {
     router.push(`/products/${product._id}`);
   };
 
+  const [isLoading, setisLoading] = useState(false)
   async function handleAddToCart(productId: string) {
     try {
-      await addToCart(productId, 1);
-      console.log("Product added to cart successfully", productId);
+      setisLoading(true);
+      const result = await addToCart(productId, 1);
+      if (result) {
+        toast.success("Product added to cart successfully");
+      }else{
+        toast.error("Failed to add product to cart");
+      }
+      console.log("Product added to cart successfully", productId, result);
     } catch (err) {
       console.error(err);
+    } finally {
+      setisLoading(false);
     }
   }
   return (
@@ -112,20 +123,22 @@ export default function ProductCard({ product }: { product: ProductProps }) {
             </div>
 
             <button
-              onClick={(e) => { e.stopPropagation(); handleAddToCart(product._id); }}
+            disabled={isLoading}
+              onClick={(e) => { e.stopPropagation(); handleAddToCart(product._id);}}
               className="cart-btn w-11 h-11 bg-zinc-950 rounded-2xl flex items-center justify-center shadow-sm"
             >
-              <ShoppingCart size={17} className="text-white" />
+              {isLoading ? <Spinner size="sm" className="text-white" /> : <ShoppingCart size={16} className="text-white" />}
             </button>
           </div>
 
           {/* Hover: full Add to Cart bar */}
           <div className="pc-actions">
-            <button
+            <button 
+              disabled={isLoading}
               onClick={(e) => { e.stopPropagation(); handleAddToCart(product._id); }}
               className="cart-btn w-full h-10 bg-zinc-950 hover:bg-zinc-800 text-white rounded-xl flex items-center justify-center gap-2 text-[12px] font-bold tracking-wide mt-1"
             >
-              <ShoppingCart size={14} />
+              {isLoading ? <Spinner size="sm" className="text-white" /> : <ShoppingCart size={16} className="text-white" />}
               Add to Cart
             </button>
           </div>
