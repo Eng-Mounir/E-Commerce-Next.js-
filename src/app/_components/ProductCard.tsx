@@ -7,144 +7,149 @@ import { ProductI } from '@/app/interfaces';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { addToCart } from '@/actions/cart.action';
+import { addToWishlist, removeFromWishlist } from '@/actions/wishList.action';
 import { Spinner } from '@/components/ui/spinner';
 import { toast } from 'sonner';
 
-
-type ProductProps = ProductI;
-
-export default function ProductCard({ product }: { product: ProductProps }) {
+export default function ProductCard({ product }: { product: ProductI }) {
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [wishlistLoading, setWishlistLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const renderStars = (rating: number) => {
-    return Array.from({ length: 5 }).map((_, i) => (
+  const renderStars = (rating: number) =>
+    Array.from({ length: 5 }).map((_, i) => (
       <Star
         key={i}
         size={11}
         className={i < Math.round(rating) ? 'fill-amber-400 text-amber-400' : 'fill-zinc-200 text-zinc-200'}
       />
     ));
-  };
 
-  const handleCardClick = () => {
-    router.push(`/products/${product._id}`);
-  };
+  const handleCardClick = () => router.push(`/products/${product._id}`);
 
-  const [isLoading, setisLoading] = useState(false)
-  async function handleAddToCart(productId: string) {
+  async function handleAddToCart(e: React.MouseEvent) {
+    e.stopPropagation();
+    setIsLoading(true);
     try {
-      setisLoading(true);
-      const result = await addToCart(productId, 1);
-      if (result) {
-        toast.success("Product added to cart successfully");
-      }else{
-        toast.error("Failed to add product to cart");
-      }
-      console.log("Product added to cart successfully", productId, result);
-    } catch (err) {
-      console.error(err);
+      const result = await addToCart(product._id);
+      result.success
+        ? toast.success('Added to cart!')
+        : toast.error('Failed to add to cart');
+    } catch {
+      toast.error('Something went wrong');
     } finally {
-      setisLoading(false);
+      setIsLoading(false);
     }
   }
+
+  async function handleWishlist(e: React.MouseEvent) {
+    e.stopPropagation();
+    setWishlistLoading(true);
+    try {
+      if (isWishlisted) {
+        const ok = await removeFromWishlist(product._id);
+        if (ok) { setIsWishlisted(false); toast.success('Removed from wishlist'); }
+        else toast.error('Failed to remove from wishlist');
+      } else {
+        const ok = await addToWishlist(product._id);
+        if (ok) { setIsWishlisted(true); toast.success('Added to wishlist!'); }
+        else toast.error('Failed to add to wishlist');
+      }
+    } catch {
+      toast.error('Something went wrong');
+    } finally {
+      setWishlistLoading(false);
+    }
+  }
+
   return (
-    <>
+    <Card
+      onClick={handleCardClick}
+      className="dm pc-root w-72 overflow-hidden border border-zinc-100 rounded-3xl cursor-pointer flex flex-col bg-white shadow-sm"
+    >
+      {/* ── Image ── */}
+      <div className="pc-img relative w-full h-64 bg-zinc-50 overflow-hidden shrink-0">
+        <Image
+          src={product.imageCover}
+          alt={product.title}
+          fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+          className="object-cover"
+        />
 
-      <Card
-        onClick={handleCardClick}
-        className="dm pc-root w-72 overflow-hidden border border-zinc-100 rounded-3xl cursor-pointer flex flex-col bg-white shadow-sm"
-      >
-        {/* ── Image ── */}
-        <div className="pc-img relative w-full h-64 bg-zinc-50 overflow-hidden shrink-0">
-          <Image
-            src={product.imageCover}
-            alt={product.title}
-            fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-            className="object-cover"
-          />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
 
-          {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-linear-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
+        {/* Wishlist button */}
+        <button
+          onClick={handleWishlist}
+          disabled={wishlistLoading}
+          className="wish-btn absolute top-3 right-3 w-9 h-9 bg-white/95 backdrop-blur rounded-xl flex items-center justify-center shadow-md"
+        >
+          {wishlistLoading
+            ? <Spinner size="sm" className="text-zinc-400" />
+            : <Heart size={16} className={isWishlisted ? 'fill-red-500 text-red-500' : 'text-zinc-400'} />
+          }
+        </button>
 
-          {/* Wishlist */}
+        {/* Category badge */}
+        <div className="absolute bottom-3 left-3">
+          <span className="text-[9px] font-bold tracking-[.15em] uppercase bg-white/95 backdrop-blur text-zinc-600 px-2.5 py-1 rounded-full">
+            {product.category.name}
+          </span>
+        </div>
+      </div>
+
+      {/* ── Details ── */}
+      <div className="p-5 flex flex-col grow gap-2">
+        <p className="text-[10px] font-bold tracking-[.16em] uppercase text-zinc-400">
+          {product.brand.name}
+        </p>
+
+        <h3 className="cg text-[1.15rem] font-bold text-zinc-900 leading-snug line-clamp-2 min-h-[2.6rem]">
+          {product.title}
+        </h3>
+
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-0.5">{renderStars(product.ratingsAverage)}</div>
+          <span className="text-[11px] text-zinc-400 font-medium">({product.ratingsQuantity})</span>
+        </div>
+
+        <div className="h-px bg-zinc-100 my-1" />
+
+        <div className="flex items-center justify-between mt-auto">
+          <div>
+            <p className="text-[10px] font-medium text-zinc-400 uppercase tracking-wider mb-0.5">Price</p>
+            <p className="cg text-2xl font-bold text-zinc-900 leading-none">EGP {product.price}</p>
+          </div>
+
           <button
-            onClick={(e) => { e.stopPropagation(); setIsWishlisted(!isWishlisted); }}
-            className="wish-btn absolute top-3 right-3 w-9 h-9 bg-white/95 backdrop-blur rounded-xl flex items-center justify-center shadow-md"
-          >
-            <Heart
-              size={16}
-              className={isWishlisted ? 'fill-red-500 text-red-500' : 'text-zinc-400'}
-            />
-          </button>
-
-          {/* Category badge */}
-          <div className="absolute bottom-3 left-3">
-            <span className="text-[9px] font-bold tracking-[.15em] uppercase bg-white/95 backdrop-blur text-zinc-600 px-2.5 py-1 rounded-full">
-              {product.category.name}
-            </span>
-          </div>
-        </div>
-
-        {/* ── Details ── */}
-        <div className="p-5 flex flex-col grow gap-2">
-
-          {/* Brand */}
-          <p className="text-[10px] font-bold tracking-[.16em] uppercase text-zinc-400">
-            {product.brand.name}
-          </p>
-
-          {/* Title */}
-          <h3 className="cg text-[1.15rem] font-bold text-zinc-900 leading-snug line-clamp-2 min-h-[2.6rem]">
-            {product.title}
-          </h3>
-
-          {/* Rating */}
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-0.5">
-              {renderStars(product.ratingsAverage)}
-            </div>
-            <span className="text-[11px] text-zinc-400 font-medium">
-              ({product.ratingsQuantity})
-            </span>
-          </div>
-
-          {/* Divider */}
-          <div className="h-px bg-zinc-100 my-1" />
-
-          {/* Price + Cart */}
-          <div className="flex items-center justify-between mt-auto">
-            <div>
-              <p className="text-[10px] font-medium text-zinc-400 uppercase tracking-wider mb-0.5">Price</p>
-              <p className="cg text-2xl font-bold text-zinc-900 leading-none">
-                EGP {product.price}
-              </p>
-            </div>
-
-            <button
             disabled={isLoading}
-              onClick={(e) => { e.stopPropagation(); handleAddToCart(product._id);}}
-              className="cart-btn w-11 h-11 bg-zinc-950 rounded-2xl flex items-center justify-center shadow-sm"
-            >
-              {isLoading ? <Spinner size="sm" className="text-white" /> : <ShoppingCart size={16} className="text-white" />}
-            </button>
-          </div>
-
-          {/* Hover: full Add to Cart bar */}
-          <div className="pc-actions">
-            <button 
-              disabled={isLoading}
-              onClick={(e) => { e.stopPropagation(); handleAddToCart(product._id); }}
-              className="cart-btn w-full h-10 bg-zinc-950 hover:bg-zinc-800 text-white rounded-xl flex items-center justify-center gap-2 text-[12px] font-bold tracking-wide mt-1"
-            >
-              {isLoading ? <Spinner size="sm" className="text-white" /> : <ShoppingCart size={16} className="text-white" />}
-              Add to Cart
-            </button>
-          </div>
-
+            onClick={handleAddToCart}
+            className="cart-btn w-11 h-11 bg-zinc-950 rounded-2xl flex items-center justify-center shadow-sm"
+          >
+            {isLoading
+              ? <Spinner size="sm" className="text-white" />
+              : <ShoppingCart size={16} className="text-white" />
+            }
+          </button>
         </div>
-      </Card>
-    </>
+
+        {/* Hover: full Add to Cart bar */}
+        <div className="pc-actions">
+          <button
+            disabled={isLoading}
+            onClick={handleAddToCart}
+            className="cart-btn w-full h-10 bg-zinc-950 hover:bg-zinc-800 text-white rounded-xl flex items-center justify-center gap-2 text-[12px] font-bold tracking-wide mt-1"
+          >
+            {isLoading
+              ? <Spinner size="sm" className="text-white" />
+              : <ShoppingCart size={14} className="text-white" />
+            }
+            Add to Cart
+          </button>
+        </div>
+      </div>
+    </Card>
   );
 }

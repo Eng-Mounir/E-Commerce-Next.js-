@@ -182,7 +182,7 @@ const router = useRouter()
             {/* Wishlist — logged in only */}
             {isLoggedIn && (
               <Link
-                href="/wishlist"
+                href="/wishList"
                 className="icon-in-1 icon-bounce w-9 h-9 rounded-full flex items-center justify-center text-zinc-500 hover:text-rose-500 hover:bg-rose-50 transition-colors duration-150"
               >
                 <Heart size={17} />
