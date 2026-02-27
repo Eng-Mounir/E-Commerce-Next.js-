@@ -1,19 +1,32 @@
 "use client"
 import React, { useState } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname,useRouter } from 'next/navigation'
 import {
   DropdownMenu, DropdownMenuTrigger, DropdownMenuContent,
   DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator
 } from "@/components/ui/dropdown-menu"
 import {
   User, Heart, ShoppingBag, Package,
-  Settings, LogOut, UserCircle, ChevronDown, ShoppingCart
+  Settings, LogOut, UserCircle, ChevronDown, ShoppingCart,
+  LogIn, UserPlus
 } from 'lucide-react'
+import { useSession, signOut } from "next-auth/react"
 
 export default function Navbar() {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
+  const { data: session, status } = useSession()
+
+  const isLoggedIn = status === "authenticated" && !!session?.user
+  const userName = session?.user?.name ?? null
+// ✅ Added inside the component:
+const router = useRouter()
+  async function handleLogout() {
+    await signOut({ redirect: false });  // clear session cookie only, no browser redirect
+    router.push('/login')     ;          // Next.js client-side navigation → page renders properly
+    router.refresh()           ;         // force server components to re-fetch (clears cached session state)
+  }
 
   const isActive = (href: string) => pathname === href
 
@@ -24,23 +37,29 @@ export default function Navbar() {
     { href: '/products',   label: 'Products'   },
   ]
 
-  const menuItems = [
+  const authMenuItems = [
     { href: '/profile',  label: 'Profile',  sub: 'View your details',   icon: UserCircle, bg: 'bg-violet-50', hbg: 'hover:bg-violet-100', color: 'text-violet-500' },
     { href: '/orders',   label: 'Orders',   sub: 'Track your orders',   icon: Package,    bg: 'bg-blue-50',   hbg: 'hover:bg-blue-100',   color: 'text-blue-500'   },
     { href: '/settings', label: 'Settings', sub: 'Preferences & more',  icon: Settings,   bg: 'bg-amber-50',  hbg: 'hover:bg-amber-100',  color: 'text-amber-500'  },
   ]
 
+  const guestMenuItems = [
+    { href: '/login',    label: 'Sign In',  sub: 'Access your account',  icon: LogIn,    bg: 'bg-blue-50',   hbg: 'hover:bg-blue-100',   color: 'text-blue-500'   },
+    { href: '/register', label: 'Register', sub: 'Create a new account', icon: UserPlus, bg: 'bg-violet-50', hbg: 'hover:bg-violet-100', color: 'text-violet-500' },
+  ]
+
+  const getInitial = (name: string | null) =>
+    name ? name.trim().charAt(0).toUpperCase() : null
+
   return (
     <>
       <style>{`
-        /* ── Navbar slide-in on mount ── */
         @keyframes navIn {
           from { opacity: 0; transform: translateY(-100%); }
           to   { opacity: 1; transform: translateY(0); }
         }
         .nav-mount { animation: navIn .5s cubic-bezier(.16,1,.3,1) both; }
 
-        /* ── Logo bounce on mount ── */
         @keyframes logoBounce {
           0%   { opacity:0; transform: scale(0.6) rotate(-10deg); }
           60%  { transform: scale(1.12) rotate(4deg); }
@@ -49,7 +68,6 @@ export default function Navbar() {
         }
         .logo-bounce { animation: logoBounce .7s cubic-bezier(.16,1,.3,1) .1s both; }
 
-        /* ── Nav links stagger in ── */
         @keyframes linkIn {
           from { opacity: 0; transform: translateY(-10px); }
           to   { opacity: 1; transform: translateY(0); }
@@ -59,7 +77,6 @@ export default function Navbar() {
         .link-in-3 { animation: linkIn .5s cubic-bezier(.16,1,.3,1) .29s both; }
         .link-in-4 { animation: linkIn .5s cubic-bezier(.16,1,.3,1) .36s both; }
 
-        /* ── Icon buttons fade in from right ── */
         @keyframes iconIn {
           from { opacity:0; transform: translateX(12px); }
           to   { opacity:1; transform: translateX(0); }
@@ -68,21 +85,18 @@ export default function Navbar() {
         .icon-in-2 { animation: iconIn .5s cubic-bezier(.16,1,.3,1) .42s both; }
         .icon-in-3 { animation: iconIn .5s cubic-bezier(.16,1,.3,1) .50s both; }
 
-        /* ── Nav link hover underline slide ── */
         .nav-link-wrap { position: relative; }
         .nav-link-wrap::after {
           content: '';
           position: absolute;
           bottom: 2px; left: 50%; right: 50%;
-          height: 2px;
-          background: currentColor;
+          height: 2px; background: currentColor;
           border-radius: 99px;
           transition: left .2s cubic-bezier(.16,1,.3,1), right .2s cubic-bezier(.16,1,.3,1);
           opacity: 0.3;
         }
         .nav-link-wrap:hover::after { left: 12px; right: 12px; }
 
-        /* ── Cart badge pulse ── */
         @keyframes badgePop {
           0%   { transform: scale(1); }
           40%  { transform: scale(1.35); }
@@ -91,25 +105,22 @@ export default function Navbar() {
         }
         .badge-pop { animation: badgePop .4s cubic-bezier(.16,1,.3,1) .6s both; }
 
-        /* ── Heart & cart icon hover bounce ── */
         .icon-bounce { transition: transform .18s cubic-bezier(.16,1,.3,1); }
-        .icon-bounce:hover { transform: scale(1.2); }
+        .icon-bounce:hover  { transform: scale(1.2); }
         .icon-bounce:active { transform: scale(0.9); }
 
-        /* ── Dropdown spring open / snap close ── */
         @keyframes dropIn {
           0%   { opacity:0; transform: translateY(-12px) scale(0.94); }
           60%  { opacity:1; transform: translateY(2px)   scale(1.01); }
           100% { opacity:1; transform: translateY(0)     scale(1);    }
         }
         @keyframes dropOut {
-          from { opacity:1; transform: translateY(0)  scale(1);    }
+          from { opacity:1; transform: translateY(0)    scale(1);    }
           to   { opacity:0; transform: translateY(-8px) scale(0.95); }
         }
         [data-radix-popper-content-wrapper] [data-state="open"]  { animation: dropIn  .3s cubic-bezier(.16,1,.3,1) forwards; }
         [data-radix-popper-content-wrapper] [data-state="closed"]{ animation: dropOut .2s cubic-bezier(.4,0,1,1)   forwards; }
 
-        /* ── Staggered menu items slide in ── */
         @keyframes itemIn {
           from { opacity:0; transform: translateX(-10px); }
           to   { opacity:1; transform: translateX(0); }
@@ -119,18 +130,13 @@ export default function Navbar() {
         [data-state="open"] .item-3 { animation: itemIn .25s cubic-bezier(.16,1,.3,1) .15s both; }
         [data-state="open"] .item-4 { animation: itemIn .25s cubic-bezier(.16,1,.3,1) .20s both; }
 
-        /* ── Dropdown item icon spin on hover ── */
         .item-icon { transition: transform .22s cubic-bezier(.16,1,.3,1); }
         .group:hover .item-icon { transform: rotate(-8deg) scale(1.15); }
 
-        /* ── Chevron rotate ── */
         .chevron { transition: transform .28s cubic-bezier(.16,1,.3,1); }
-        .chevron-open  { transform: rotate(180deg); }
+        .chevron-open { transform: rotate(180deg); }
 
-        /* ── Account button shimmer on hover ── */
-        .acct-btn {
-          position: relative; overflow: hidden;
-        }
+        .acct-btn { position: relative; overflow: hidden; }
         .acct-btn::before {
           content: '';
           position: absolute; top: 0; left: -100%;
@@ -172,24 +178,28 @@ export default function Navbar() {
           {/* ── Right actions ── */}
           <div className="flex items-center gap-1.5 shrink-0">
 
-            {/* Wishlist */}
-            <Link
-              href="/wishlist"
-              className="icon-in-1 icon-bounce w-9 h-9 rounded-full flex items-center justify-center text-zinc-500 hover:text-rose-500 hover:bg-rose-50 transition-colors duration-150"
-            >
-              <Heart size={17} />
-            </Link>
+            {/* Wishlist — logged in only */}
+            {isLoggedIn && (
+              <Link
+                href="/wishlist"
+                className="icon-in-1 icon-bounce w-9 h-9 rounded-full flex items-center justify-center text-zinc-500 hover:text-rose-500 hover:bg-rose-50 transition-colors duration-150"
+              >
+                <Heart size={17} />
+              </Link>
+            )}
 
-            {/* Cart */}
-            <Link
-              href="/cart"
-              className="icon-in-2 icon-bounce relative w-9 h-9 rounded-full flex items-center justify-center text-zinc-500 hover:text-blue-500 hover:bg-blue-50 transition-colors duration-150"
-            >
-              <ShoppingCart size={17} />
-              <span className="badge-pop absolute -top-0.5 -right-0.5 w-4 h-4 bg-zinc-950 text-white text-[9px] font-bold rounded-full flex items-center justify-center leading-none">
-                3
-              </span>
-            </Link>
+            {/* Cart — logged in only */}
+            {isLoggedIn && (
+              <Link
+                href="/cart"
+                className="icon-in-2 icon-bounce relative w-9 h-9 rounded-full flex items-center justify-center text-zinc-500 hover:text-blue-500 hover:bg-blue-50 transition-colors duration-150"
+              >
+                <ShoppingCart size={17} />
+                <span className="badge-pop absolute -top-0.5 -right-0.5 w-4 h-4 bg-zinc-950 text-white text-[9px] font-bold rounded-full flex items-center justify-center leading-none">
+                  3
+                </span>
+              </Link>
+            )}
 
             <div className="w-px h-5 bg-zinc-200 mx-1" />
 
@@ -198,10 +208,18 @@ export default function Navbar() {
               <DropdownMenu open={open} onOpenChange={setOpen}>
                 <DropdownMenuTrigger asChild>
                   <button className="acct-btn flex items-center gap-2 bg-zinc-950 hover:bg-zinc-800 transition-colors duration-200 rounded-full pl-1.5 pr-3 py-1.5 outline-none">
-                    <div className="w-6 h-6 rounded-full bg-white/15 flex items-center justify-center">
-                      <User size={13} className="text-white" />
+                    <div className="w-6 h-6 rounded-full bg-white/15 flex items-center justify-center shrink-0">
+                      {isLoggedIn && getInitial(userName) ? (
+                        <span className="text-[11px] font-bold text-white leading-none">
+                          {getInitial(userName)}
+                        </span>
+                      ) : (
+                        <User size={13} className="text-white" />
+                      )}
                     </div>
-                    <span className="text-[12px] font-semibold text-white/70 hidden sm:block">Account</span>
+                    <span className="text-[12px] font-semibold text-white/70 hidden sm:block max-w-20 truncate">
+                      {isLoggedIn && userName ? userName.split(' ')[0] : 'Account'}
+                    </span>
                     <ChevronDown size={12} className={`chevron text-white/50 ${open ? 'chevron-open' : ''}`} />
                   </button>
                 </DropdownMenuTrigger>
@@ -211,51 +229,89 @@ export default function Navbar() {
                   align="end"
                   sideOffset={6}
                 >
+
                   {/* Header */}
                   <div className="item-1 bg-linear-to-br from-zinc-50 to-zinc-100 border border-zinc-200/70 rounded-2xl px-4 py-3.5 mb-1.5 flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-white border border-zinc-200 shadow-sm flex items-center justify-center shrink-0">
-                      <User size={17} className="text-zinc-400" />
+                      {isLoggedIn && getInitial(userName) ? (
+                        <span className="text-lg font-bold text-zinc-700 leading-none">
+                          {getInitial(userName)}
+                        </span>
+                      ) : (
+                        <User size={17} className="text-zinc-400" />
+                      )}
                     </div>
                     <div>
-                      <p className="text-[13px] font-bold text-zinc-800 leading-none">My Account</p>
-                      <p className="text-[11px] text-zinc-400 mt-0.5 font-light">Welcome back 👋</p>
+                      <p className="text-[13px] font-bold text-zinc-800 leading-none">
+                        {isLoggedIn && userName ? userName : 'My Account'}
+                      </p>
+                      <p className="text-[11px] text-zinc-400 mt-0.5 font-light">
+                        {isLoggedIn ? 'Welcome back 👋' : 'Sign in to continue'}
+                      </p>
                     </div>
                   </div>
 
-                  <DropdownMenuGroup>
-                    {menuItems.map(({ href, label, sub, icon: Icon, bg, hbg, color }, i) => (
-                      <DropdownMenuItem key={href} asChild className="rounded-2xl p-0 focus:bg-transparent">
-                        <Link
-                          href={href}
-                          className={`item-${i + 2} flex items-center gap-3 px-3 py-2.5 rounded-2xl hover:bg-zinc-50 transition-colors cursor-pointer w-full group`}
+                  {/* Conditional menu items */}
+                  {isLoggedIn ? (
+                    <>
+                      <DropdownMenuGroup>
+                        {authMenuItems.map(({ href, label, sub, icon: Icon, bg, hbg, color }, i) => (
+                          <DropdownMenuItem key={href} asChild className="rounded-2xl p-0 focus:bg-transparent">
+                            <Link
+                              href={href}
+                              className={`item-${i + 2} flex items-center gap-3 px-3 py-2.5 rounded-2xl hover:bg-zinc-50 transition-colors cursor-pointer w-full group`}
+                            >
+                              <div className={`item-icon w-8 h-8 rounded-full ${bg} ${hbg} flex items-center justify-center shrink-0 transition-colors`}>
+                                <Icon size={15} className={color} />
+                              </div>
+                              <div>
+                                <p className="text-[13px] font-semibold text-zinc-700 leading-none">{label}</p>
+                                <p className="text-[11px] text-zinc-400 mt-0.5">{sub}</p>
+                              </div>
+                            </Link>
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuGroup>
+
+                      <DropdownMenuSeparator className="my-2 bg-zinc-100" />
+
+                      <DropdownMenuGroup>
+                        <DropdownMenuItem
+                          className="rounded-2xl p-0 focus:bg-transparent"
+                          onSelect={(e) => { e.preventDefault(); handleLogout() }}
                         >
-                          <div className={`item-icon w-8 h-8 rounded-full ${bg} ${hbg} flex items-center justify-center shrink-0 transition-colors`}>
-                            <Icon size={15} className={color} />
+                          <div className="flex items-center gap-3 px-3 py-2.5 rounded-2xl hover:bg-red-50 transition-colors cursor-pointer w-full group">
+                            <div className="item-icon w-8 h-8 rounded-full bg-red-50 group-hover:bg-red-100 flex items-center justify-center shrink-0 transition-colors">
+                              <LogOut size={15} className="text-red-400" />
+                            </div>
+                            <div>
+                              <p className="text-[13px] font-semibold text-red-500 leading-none">Log out</p>
+                              <p className="text-[11px] text-red-300 mt-0.5">End your session</p>
+                            </div>
                           </div>
-                          <div>
-                            <p className="text-[13px] font-semibold text-zinc-700 leading-none">{label}</p>
-                            <p className="text-[11px] text-zinc-400 mt-0.5">{sub}</p>
-                          </div>
-                        </Link>
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuGroup>
-
-                  <DropdownMenuSeparator className="my-2 bg-zinc-100" />
-
-                  <DropdownMenuGroup>
-                    <DropdownMenuItem variant="destructive" className="rounded-2xl p-0 focus:bg-transparent">
-                      <div className="flex items-center gap-3 px-3 py-2.5 rounded-2xl hover:bg-red-50 transition-colors cursor-pointer w-full group">
-                        <div className="item-icon w-8 h-8 rounded-full bg-red-50 group-hover:bg-red-100 flex items-center justify-center shrink-0 transition-colors">
-                          <LogOut size={15} className="text-red-400" />
-                        </div>
-                        <div>
-                          <p className="text-[13px] font-semibold text-red-500 leading-none">Log out</p>
-                          <p className="text-[11px] text-red-300 mt-0.5">End your session</p>
-                        </div>
-                      </div>
-                    </DropdownMenuItem>
-                  </DropdownMenuGroup>
+                        </DropdownMenuItem>
+                      </DropdownMenuGroup>
+                    </>
+                  ) : (
+                    <DropdownMenuGroup>
+                      {guestMenuItems.map(({ href, label, sub, icon: Icon, bg, hbg, color }, i) => (
+                        <DropdownMenuItem key={href} asChild className="rounded-2xl p-0 focus:bg-transparent">
+                          <Link
+                            href={href}
+                            className={`item-${i + 2} flex items-center gap-3 px-3 py-2.5 rounded-2xl hover:bg-zinc-50 transition-colors cursor-pointer w-full group`}
+                          >
+                            <div className={`item-icon w-8 h-8 rounded-full ${bg} ${hbg} flex items-center justify-center shrink-0 transition-colors`}>
+                              <Icon size={15} className={color} />
+                            </div>
+                            <div>
+                              <p className="text-[13px] font-semibold text-zinc-700 leading-none">{label}</p>
+                              <p className="text-[11px] text-zinc-400 mt-0.5">{sub}</p>
+                            </div>
+                          </Link>
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuGroup>
+                  )}
 
                 </DropdownMenuContent>
               </DropdownMenu>

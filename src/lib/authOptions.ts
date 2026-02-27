@@ -42,9 +42,9 @@ async authorize(credentials) {
 }
         })
     ],
-    // session:{
-    //     strategy:"jwt",
-    // },
+    session:{
+        strategy:"jwt",
+    },
     // jwt:{
     //     secret: process.env.NEXTAUTH_SECRET,
     // },
