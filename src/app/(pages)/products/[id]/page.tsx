@@ -1,12 +1,12 @@
 import { fetchProductById } from '@/services/product.services';
 import ImageCarousel from '@/app/_components/ImageCarousel';
 import Breadcrumb from '@/app/_components/Breadcrumb';
-import { ShoppingCart, Heart, Star, Package, Truck, ShieldCheck, RotateCcw, Award, Sparkles, ChevronRight } from 'lucide-react';
+import { Heart, Star, Package, Truck, ShieldCheck, RotateCcw, Award, Sparkles, ChevronRight } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import { ProductDetailPageProps } from '@/app/interfaces';
-
+import AddToCartButton from "@/app/_components/AddToCartButton";
 export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
   const { id } = await params;
   const productData = await fetchProductById(id);
@@ -41,7 +41,6 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
   };
 
   const inStock = product.quantity !== undefined && product.quantity > 0;
-
   return (
     <>
 
@@ -158,16 +157,14 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                 </div>
 
                 {/* Action buttons */}
-                <div className="a5 flex items-center gap-3">
-                  <button className="lift flex-1 h-13 bg-zinc-950 hover:bg-zinc-800 text-white rounded-2xl flex items-center justify-center gap-2.5 font-bold text-sm tracking-wide transition-colors">
-                    <ShoppingCart size={18} />
-                    Add to Cart
-                  </button>
-                  <button className="wish-btn h-13 w-13 border-2 border-zinc-200 rounded-2xl flex items-center justify-center transition-all">
-                    <Heart size={20} className="text-zinc-500" />
-                  </button>
-                </div>
+<div className="a5 flex items-center gap-3">
+  <AddToCartButton productId={product._id} />
 
+  <button className="wish-btn h-13 w-13 border-2 border-zinc-200 rounded-2xl flex items-center justify-center transition-all">
+    <Heart size={20} className="text-zinc-500" />
+  </button>
+</div> 
+                
                 {/* Stock info */}
                 {product.quantity !== undefined && (
                   <div className="a5 mt-5 pt-5 border-t border-zinc-100">
