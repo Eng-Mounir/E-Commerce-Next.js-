@@ -35,6 +35,7 @@ const router = useRouter()
     { href: '/about',      label: 'About'      },
     { href: '/categories', label: 'Categories' },
     { href: '/products',   label: 'Products'   },
+    { href: '/brands',    label: 'Brands'    },
   ]
 
   const authMenuItems = [
