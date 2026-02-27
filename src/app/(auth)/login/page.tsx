@@ -26,7 +26,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { signInUser } from "@/services/auth.services";
+import { signIn } from "next-auth/react";
 
 /* ================= TYPES ================= */
 
@@ -86,18 +86,31 @@ export default function Login() {
   };
 
   const onSubmit = async (data: LoginFormData) => {
-    try {
-      const response = await signInUser(data);
+    // try {
+    //   const response = await signInUser(data);
 
-      if (response?.message === "success") {
-        toast.success("Welcome back!");
-        router.push("/");
-      } else {
-        toast.error("Invalid credentials.");
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong.");
+    //   if (response?.message === "success") {
+    //     toast.success("Welcome back!");
+    //     router.push("/");
+    //   } else {
+    //     toast.error("Invalid credentials.");
+    //   }
+    // } catch (error) {
+    //   console.error(error);
+    //   toast.error("Something went wrong.");
+    // }
+    const result = await signIn("credentials", {
+      email: data.email,
+      password: data.password,
+      redirect: false,
+      callbackUrl: "/",
+    });
+    console.log(result);
+    if (result?.error) {
+      toast.error("Invalid credentials.");
+    } else {
+      toast.success("Welcome back!");
+      router.push("/");
     }
   };
 
