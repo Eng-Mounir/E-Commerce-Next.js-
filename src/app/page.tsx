@@ -1,4 +1,4 @@
-"use client"
+﻿"use client";
 
 import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,7 @@ import {
   ShoppingBag, ArrowRight, LayoutGrid, Truck, Star,
   ShieldCheck, Zap, TrendingUp, Award,
   Headphones, Watch, Shirt, Laptop, Sparkles, ChevronRight, RotateCcw, Phone,
-   Quote
+  Quote
 } from "lucide-react";
 
 export default function Home() {
@@ -24,11 +24,17 @@ export default function Home() {
     { icon: Headphones,  label: "Audio",         count: "540 items",   bg: "bg-zinc-950", text: "text-white",         sub: "text-white/40" },
   ];
 
-
   const testimonials = [
     { name: "Sarah K.",    role: "Verified Buyer",  text: "The quality is unmatched. My order arrived next day, perfectly packaged. ShopMart is my only stop now.", stars: 5 },
     { name: "Marcus T.",   role: "Member since 2023", text: "I've saved over $400 this year just from member discounts. The flash sales are absolutely insane.", stars: 5 },
     { name: "Priya M.",    role: "Fashion Lover",   text: "Curated selection is *chef's kiss*. They carry brands I couldn't find anywhere else locally.", stars: 5 },
+  ];
+
+  // Define feature items for the dark card (to avoid the array mapping issue)
+  const featureItems = [
+    { icon: Truck, label: "Free Ship" },
+    { icon: ShieldCheck, label: "Secure" },
+    { icon: Award, label: "Premium" }
   ];
 
   return (
@@ -179,12 +185,15 @@ export default function Home() {
                     Curated collections from premium labels, delivered to your door in 24 hours.
                   </p>
                   <div className="mt-6 flex items-center gap-2.5 flex-wrap">
-                    {[[Truck,"Free Ship"],[ShieldCheck,"Secure"],[Award,"Premium"]].map(([Icon,label])=>(
-                      <div key={label} className="flex items-center gap-1.5 bg-white/8 rounded-xl px-3 py-2">
-                        <Icon size={11} className="text-white/50" />
-                        <span className="text-[9px] text-white/40 font-bold tracking-wide uppercase">{label}</span>
-                      </div>
-                    ))}
+                    {featureItems.map((item) => {
+                      const Icon = item.icon;
+                      return (
+                        <div key={item.label} className="flex items-center gap-1.5 bg-white/8 rounded-xl px-3 py-2">
+                          <Icon size={11} className="text-white/50" />
+                          <span className="text-[9px] text-white/40 font-bold tracking-wide uppercase">{item.label}</span>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
@@ -312,22 +321,25 @@ export default function Home() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {[
-              { icon:Truck,      title:"Free Fast Shipping",     desc:"Free delivery on all orders over $50. Express next-day options available at checkout.",       dark:true  },
-              { icon:RotateCcw,  title:"Easy 30-Day Returns",    desc:"Not happy? Return anything within 30 days, no questions asked. Full refund guaranteed.",       dark:false },
-              { icon:ShieldCheck,title:"Secure Payments",        desc:"256-bit SSL encryption on every transaction. Your payment info is always safe with us.",      dark:false },
-              { icon:Award,      title:"Premium Quality",        desc:"Every item is quality-checked before shipping. We only carry brands we'd buy ourselves.",      dark:false },
-              { icon:Phone,      title:"24/7 Customer Support",  desc:"Real humans, real help — any time of day. Chat, email, or call whenever you need us.",        dark:true  },
-              { icon:Sparkles,   title:"Members Rewards",        desc:"Earn points on every purchase. Redeem for discounts, free shipping, and exclusive perks.",     dark:false },
-            ].map(({icon:Icon,title,desc,dark})=>(
-              <div key={title}
-                className={`card-hover rounded-3xl p-7 border cursor-default ${dark?"bg-zinc-950 border-zinc-800":"bg-white border-zinc-100"}`}>
-                <div className={`w-12 h-12 ${dark?"bg-white/10":"bg-zinc-100"} rounded-2xl flex items-center justify-center mb-5`}>
-                  <Icon size={22} className={dark?"text-white/70":"text-zinc-700"}/>
+              { icon: Truck,      title: "Free Fast Shipping",     desc: "Free delivery on all orders over $50. Express next-day options available at checkout.",       dark: true  },
+              { icon: RotateCcw,  title: "Easy 30-Day Returns",    desc: "Not happy? Return anything within 30 days, no questions asked. Full refund guaranteed.",       dark: false },
+              { icon: ShieldCheck, title: "Secure Payments",        desc: "256-bit SSL encryption on every transaction. Your payment info is always safe with us.",      dark: false },
+              { icon: Award,      title: "Premium Quality",        desc: "Every item is quality-checked before shipping. We only carry brands we'd buy ourselves.",      dark: false },
+              { icon: Phone,      title: "24/7 Customer Support",  desc: "Real humans, real help — any time of day. Chat, email, or call whenever you need us.",        dark: true  },
+              { icon: Sparkles,   title: "Members Rewards",        desc: "Earn points on every purchase. Redeem for discounts, free shipping, and exclusive perks.",     dark: false },
+            ].map((item) => {
+              const Icon = item.icon;
+              return (
+                <div key={item.title}
+                  className={`card-hover rounded-3xl p-7 border cursor-default ${item.dark ? "bg-zinc-950 border-zinc-800" : "bg-white border-zinc-100"}`}>
+                  <div className={`w-12 h-12 ${item.dark ? "bg-white/10" : "bg-zinc-100"} rounded-2xl flex items-center justify-center mb-5`}>
+                    <Icon size={22} className={item.dark ? "text-white/70" : "text-zinc-700"} />
+                  </div>
+                  <p className={`font-bold text-[15px] mb-2 ${item.dark ? "text-white" : "text-zinc-900"}`}>{item.title}</p>
+                  <p className={`text-sm leading-relaxed font-light ${item.dark ? "text-white/40" : "text-zinc-500"}`}>{item.desc}</p>
                 </div>
-                <p className={`font-bold text-[15px] mb-2 ${dark?"text-white":"text-zinc-900"}`}>{title}</p>
-                <p className={`text-sm leading-relaxed font-light ${dark?"text-white/40":"text-zinc-500"}`}>{desc}</p>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </section>
 
