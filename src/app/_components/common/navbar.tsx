@@ -1,39 +1,39 @@
-"use client"
+﻿"use client";
 
-import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   DropdownMenu, DropdownMenuTrigger, DropdownMenuContent,
   DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import {
   User, Heart, ShoppingBag, Package,
   Settings, LogOut, UserCircle, ChevronDown, ShoppingCart,
-  LogIn, UserPlus
-} from 'lucide-react'
-import { useSession, signOut } from "next-auth/react"
-import React, { useState, useContext } from 'react'
-import { cartContext } from '@/providers/cart-Provider'  // ✅ named import
+  LogIn, UserPlus, Menu, X, Grid3x3, Tag
+} from 'lucide-react';
+import { useSession, signOut } from "next-auth/react";
+import React, { useState, useContext } from 'react';
+import { cartContext } from '@/providers/cart-Provider';
 
 export default function Navbar() {
-  const pathname = usePathname()
-  const router = useRouter()
-  const [open, setOpen] = useState(false)
-  const { data: session, status } = useSession()
+  const pathname = usePathname();
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { data: session, status } = useSession();
 
-  const isLoggedIn = status === "authenticated" && !!session?.user
-  const userName = session?.user?.name ?? null
+  const isLoggedIn = status === "authenticated" && !!session?.user;
+  const userName = session?.user?.name ?? null;
 
-  // ✅ Safe — context has a default value so it's never null
-  const { numberOfBoughtItems } = useContext(cartContext)
+  const { numberOfBoughtItems } = useContext(cartContext);
 
   async function handleLogout() {
-    await signOut({ redirect: false })
-    router.push('/login')
-    router.refresh()
+    await signOut({ redirect: false });
+    router.push('/login');
+    router.refresh();
   }
 
-  const isActive = (href: string) => pathname === href
+  const isActive = (href: string) => pathname === href;
 
   const navLinks = [
     { href: '/',           label: 'Home'       },
@@ -41,21 +41,31 @@ export default function Navbar() {
     { href: '/categories', label: 'Categories' },
     { href: '/products',   label: 'Products'   },
     { href: '/brands',     label: 'Brands'     },
-  ]
+  ];
+
+  const categoryLinks = [
+    { href: '/categories/men', label: 'Men' },
+    { href: '/categories/women', label: 'Women' },
+    { href: '/categories/kids', label: 'Kids' },
+  ];
+
+  const brandLinks = [
+    { href: '/brands', label: 'All Brands' },
+  ];
 
   const authMenuItems = [
     { href: '/profile',  label: 'Profile',  sub: 'View your details',   icon: UserCircle, bg: 'bg-violet-50', hbg: 'hover:bg-violet-100', color: 'text-violet-500' },
     { href: '/orders',   label: 'Orders',   sub: 'Track your orders',   icon: Package,    bg: 'bg-blue-50',   hbg: 'hover:bg-blue-100',   color: 'text-blue-500'   },
     { href: '/settings', label: 'Settings', sub: 'Preferences & more',  icon: Settings,   bg: 'bg-amber-50',  hbg: 'hover:bg-amber-100',  color: 'text-amber-500'  },
-  ]
+  ];
 
   const guestMenuItems = [
     { href: '/login',    label: 'Sign In',  sub: 'Access your account',  icon: LogIn,    bg: 'bg-blue-50',   hbg: 'hover:bg-blue-100',   color: 'text-blue-500'   },
     { href: '/register', label: 'Register', sub: 'Create a new account', icon: UserPlus, bg: 'bg-violet-50', hbg: 'hover:bg-violet-100', color: 'text-violet-500' },
-  ]
+  ];
 
   const getInitial = (name: string | null) =>
-    name ? name.trim().charAt(0).toUpperCase() : null
+    name ? name.trim().charAt(0).toUpperCase() : null;
 
   return (
     <>
@@ -152,6 +162,22 @@ export default function Navbar() {
           transition: left .4s ease;
         }
         .acct-btn:hover::before { left: 140%; }
+
+        /* Mobile menu animations */
+        @keyframes slideDown {
+          from { opacity: 0; transform: translateY(-20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideUp {
+          from { opacity: 1; transform: translateY(0); }
+          to { opacity: 0; transform: translateY(-20px); }
+        }
+        .mobile-menu-open {
+          animation: slideDown 0.25s cubic-bezier(.16,1,.3,1) forwards;
+        }
+        .mobile-menu-close {
+          animation: slideUp 0.2s cubic-bezier(.4,0,1,1) forwards;
+        }
       `}</style>
 
       <nav className="nav-mount sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-black/5">
@@ -165,7 +191,7 @@ export default function Navbar() {
             <span className="text-[1.1rem] font-bold text-zinc-900 tracking-tight">ShopMart</span>
           </Link>
 
-          {/* ── Nav links ── */}
+          {/* ── Desktop Nav links ── */}
           <div className="hidden md:flex items-center gap-1">
             {navLinks.map(({ href, label }, i) => (
               <Link
@@ -184,6 +210,15 @@ export default function Navbar() {
 
           {/* ── Right actions ── */}
           <div className="flex items-center gap-1.5 shrink-0">
+
+            {/* Mobile Menu Button - Positioned first on mobile */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden w-9 h-9 rounded-full flex items-center justify-center text-zinc-600 hover:bg-zinc-100 transition-colors relative z-[60]"
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+            </button>
 
             {/* Wishlist */}
             {isLoggedIn && (
@@ -324,7 +359,117 @@ export default function Navbar() {
             </div>
           </div>
         </div>
+
+        {/* ── Mobile Menu Overlay ── */}
+        {mobileMenuOpen && (
+          <>
+            {/* Backdrop */}
+            <div 
+              className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 md:hidden"
+              onClick={() => setMobileMenuOpen(false)}
+            />
+            
+            {/* Menu Panel */}
+            <div className="absolute left-0 right-0 top-full mt-1 mx-4 z-50 md:hidden">
+              <div className="bg-white rounded-2xl border border-zinc-200/60 shadow-xl overflow-hidden mobile-menu-open">
+                <div className="max-h-[calc(100vh-120px)] overflow-y-auto py-3">
+                  
+                  {/* Quick Actions for Logged In Users */}
+                  {isLoggedIn && (
+                    <div className="px-4 py-3 bg-zinc-50 border-b border-zinc-100">
+                      <p className="text-sm font-medium text-zinc-700">Signed in as</p>
+                      <p className="text-base font-bold text-zinc-900 truncate">{userName}</p>
+                    </div>
+                  )}
+
+                  {/* Main Navigation Links */}
+                  <div className="px-3 py-2">
+                    <p className="text-xs font-semibold text-zinc-400 uppercase tracking-wider px-3 py-2">Menu</p>
+                    <div className="space-y-1">
+                      {navLinks.map(({ href, label }) => (
+                        <Link
+                          key={href}
+                          href={href}
+                          onClick={() => setMobileMenuOpen(false)}
+                          className={`flex items-center px-3 py-3 rounded-xl text-sm font-medium transition-colors ${
+                            isActive(href)
+                              ? 'bg-zinc-950 text-white'
+                              : 'text-zinc-600 hover:bg-zinc-100'
+                          }`}
+                        >
+                          {label}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="h-px bg-zinc-100 my-2 mx-3" />
+
+                  {/* Categories Section */}
+                  <div className="px-3 py-2">
+                    <div className="flex items-center gap-2 px-3 py-2">
+                      <Grid3x3 size={16} className="text-zinc-400" />
+                      <p className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Shop by Category</p>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2 px-3">
+                      {categoryLinks.map(({ href, label }) => (
+                        <Link
+                          key={href}
+                          href={href}
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="bg-zinc-50 hover:bg-zinc-100 rounded-xl py-3 text-center transition-colors"
+                        >
+                          <span className="text-xs font-medium text-zinc-700">{label}</span>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Brands Section */}
+                  <div className="px-3 py-2">
+                    <div className="flex items-center gap-2 px-3 py-2">
+                      <Tag size={16} className="text-zinc-400" />
+                      <p className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Brands</p>
+                    </div>
+                    <div className="px-3">
+                      <Link
+                        href="/brands"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="block bg-zinc-50 hover:bg-zinc-100 rounded-xl py-4 text-center transition-colors"
+                      >
+                        <span className="text-sm font-medium text-zinc-700">Browse All Brands</span>
+                      </Link>
+                    </div>
+                  </div>
+
+                  {/* Auth Links for Guests */}
+                  {!isLoggedIn && (
+                    <>
+                      <div className="h-px bg-zinc-100 my-2 mx-3" />
+                      <div className="px-3 py-2">
+                        <p className="text-xs font-semibold text-zinc-400 uppercase tracking-wider px-3 py-2">Account</p>
+                        <div className="space-y-1">
+                          {guestMenuItems.map(({ href, label, icon: Icon }) => (
+                            <Link
+                              key={href}
+                              href={href}
+                              onClick={() => setMobileMenuOpen(false)}
+                              className="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium text-zinc-600 hover:bg-zinc-100 transition-colors"
+                            >
+                              <Icon size={16} className="text-zinc-400" />
+                              {label}
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+          </>
+        )}
       </nav>
     </>
-  )
+  );
 }
