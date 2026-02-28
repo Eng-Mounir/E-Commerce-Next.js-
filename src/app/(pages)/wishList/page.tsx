@@ -55,60 +55,6 @@ export default function WishlistPage() {
 
   return (
     <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=DM+Sans:wght@300;400;500;600&display=swap');
-        .cg { font-family: 'Cormorant Garamond', serif; }
-        .dm { font-family: 'DM Sans', sans-serif; }
-
-        @keyframes fadeUp   { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
-        @keyframes spin     { to{transform:rotate(360deg)} }
-        @keyframes heartPop { 0%{transform:scale(1)} 40%{transform:scale(1.35)} 70%{transform:scale(.9)} 100%{transform:scale(1)} }
-        @keyframes skelPulse{ 0%,100%{opacity:.06} 50%{opacity:.14} }
-        @keyframes marquee  { from{transform:translateX(0)} to{transform:translateX(-50%)} }
-
-        .a1{animation:fadeUp .6s cubic-bezier(.16,1,.3,1) .05s both}
-        .a2{animation:fadeUp .6s cubic-bezier(.16,1,.3,1) .15s both}
-        .mq{animation:marquee 26s linear infinite}
-        .spinner{animation:spin .7s linear infinite}
-        .skel{animation:skelPulse 1.8s ease-in-out infinite}
-
-        /* Card */
-        .wish-card {
-          transition: all .28s cubic-bezier(.16,1,.3,1);
-        }
-        .wish-card:hover {
-          transform: translateY(-6px);
-          box-shadow: 0 20px 50px rgba(0,0,0,.09);
-        }
-        .wish-card:hover .card-img img {
-          transform: scale(1.06);
-        }
-        .card-img img { transition: transform .4s cubic-bezier(.16,1,.3,1); }
-
-        /* Remove button */
-        .rm-btn {
-          transition: all .18s ease;
-          opacity: 0;
-        }
-        .wish-card:hover .rm-btn { opacity: 1; }
-        .rm-btn:hover { background: #fff1f2; color: #ef4444; transform: scale(1.1); }
-
-        /* Add to cart button */
-        .cart-btn {
-          transition: all .2s cubic-bezier(.16,1,.3,1);
-          transform: translateY(8px);
-          opacity: 0;
-        }
-        .wish-card:hover .cart-btn {
-          transform: translateY(0);
-          opacity: 1;
-        }
-
-        /* Lift for cta buttons */
-        .lift { transition: transform .2s ease, box-shadow .2s ease; }
-        .lift:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(0,0,0,.13); }
-        .lift:active { transform: translateY(0); }
-      `}</style>
 
       <div className="dm bg-white min-h-screen">
 

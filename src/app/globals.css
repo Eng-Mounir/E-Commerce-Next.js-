@@ -69,7 +69,7 @@
    Animations
 ========================== */
 @keyframes fadeUp {
-  from { opacity:0; transform:translateY(28px); }
+  from { opacity:0; transform:translateY(16px); }
   to { opacity:1; transform:translateY(0); }
 }
 
@@ -93,6 +93,11 @@
   50% { transform:translateY(-10px) rotate(3deg); }
 }
 
+@keyframes float {
+  0%,100% { transform:translateY(0); }
+  50% { transform:translateY(-6px); }
+}
+
 @keyframes spin {
   to { transform:rotate(360deg); }
 }
@@ -103,8 +108,8 @@
 }
 
 @keyframes shimmer {
-  0% { background-position:-200% 0; }
-  100% { background-position:200% 0; }
+  from { transform:translateX(-100%); }
+  to { transform:translateX(200%); }
 }
 
 @keyframes pulse2 {
@@ -112,41 +117,70 @@
   70% { box-shadow:0 0 0 8px rgba(34,197,94,0); }
 }
 
+@keyframes avatarIn {
+  from { opacity:0; transform:translateY(30px) scale(.85); }
+  to { opacity:1; transform:translateY(0) scale(1); }
+}
+
+@keyframes skelPulse {
+  0%,100% { opacity:.06; }
+  50% { opacity:.15; }
+}
+
+@keyframes heartPop {
+  0% { transform:scale(1); }
+  40% { transform:scale(1.35); }
+  70% { transform:scale(.9); }
+  100% { transform:scale(1); }
+}
+
+/* Alternate shimmer for brand cards */
+@keyframes brandShimmer {
+  from { background-position: -200% center; }
+  to { background-position: 200% center; }
+}
+
 /* ==========================
    Animation Classes
 ========================== */
-.a1 { animation: fadeUp .7s cubic-bezier(.16,1,.3,1) .05s both; }
-.a2 { animation: fadeUp .7s cubic-bezier(.16,1,.3,1) .18s both; }
-.a3 { animation: fadeUp .7s cubic-bezier(.16,1,.3,1) .30s both; }
-.a4 { animation: fadeUp .7s cubic-bezier(.16,1,.3,1) .42s both; }
+.a0 { animation: fadeIn .5s ease .0s both; }
+.a1 { animation: fadeUp .6s cubic-bezier(.16,1,.3,1) .05s both; }
+.a2 { animation: fadeUp .6s cubic-bezier(.16,1,.3,1) .15s both; }
+.a3 { animation: fadeUp .6s cubic-bezier(.16,1,.3,1) .25s both; }
+.a4 { animation: fadeUp .6s cubic-bezier(.16,1,.3,1) .4s both; }
 .a5 { animation: fadeUp .7s cubic-bezier(.16,1,.3,1) .54s both; }
 
 .aR { animation: slideR .8s cubic-bezier(.16,1,.3,1) .3s both; }
 .af { animation: fadeIn 1s ease .1s both; }
+.av { animation: avatarIn .7s cubic-bezier(.16,1,.3,1) .15s both; }
 
 .fa { animation: floatA 5s ease-in-out infinite; }
 .fb { animation: floatB 6s ease-in-out infinite 1s; }
+.float-badge { animation: float 3s ease-in-out infinite; }
 
 .sp, .spinner { animation: spin .7s linear infinite; }
 
 .mq, .marquee-track {
-  display:flex;
-  gap:2rem;
-  animation: marquee 18s linear infinite;
+  display: flex;
+  gap: 2rem;
+  animation: marquee 26s linear infinite;
   white-space: nowrap;
 }
 
 .pulse-dot { animation: pulse2 2s infinite; }
+.heart-pop { animation: heartPop .4s cubic-bezier(.16,1,.3,1); }
+
+.skel { animation: skelPulse 1.8s ease-in-out infinite; background: #f4f4f5; }
 
 /* ==========================
    Hover Effects
 ========================== */
 .lift {
-  transition: transform .22s ease, box-shadow .22s ease;
+  transition: transform .2s ease, box-shadow .2s ease;
 }
 .lift:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 16px 40px rgba(0,0,0,.13);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(0,0,0,.13);
 }
 .lift:active { transform: translateY(0); }
 
@@ -165,6 +199,17 @@
   transform: scale(1.03);
   box-shadow: 0 12px 32px rgba(0,0,0,.1);
 }
+
+.stat-card {
+  transition: all .25s cubic-bezier(.16,1,.3,1);
+}
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(0,0,0,.08);
+  border-color: #d4d4d8;
+}
+
+.menu-item { transition: all .18s ease; }
 
 /* ==========================
    Product Card
@@ -195,6 +240,50 @@
 }
 
 /* ==========================
+   Wishlist Card
+========================== */
+.wish-card {
+  transition: all .28s cubic-bezier(.16,1,.3,1);
+}
+.wish-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 50px rgba(0,0,0,.09);
+}
+
+.card-img img {
+  transition: transform .4s cubic-bezier(.16,1,.3,1);
+}
+.wish-card:hover .card-img img {
+  transform: scale(1.06);
+}
+
+.rm-btn {
+  transition: all .18s ease;
+  opacity: 0;
+}
+.wish-card:hover .rm-btn { opacity: 1; }
+.rm-btn:hover {
+  background: #fff1f2;
+  color: #ef4444;
+  transform: scale(1.1);
+}
+
+.cart-btn {
+  transition: all .2s cubic-bezier(.16,1,.3,1);
+  transform: translateY(8px);
+  opacity: 0;
+}
+.wish-card:hover .cart-btn {
+  transform: translateY(0);
+  opacity: 1;
+}
+.cart-btn:hover {
+  background: #27272a;
+  transform: translateY(-1px);
+}
+.cart-btn:active { transform: translateY(0); }
+
+/* ==========================
    Cart Styles
 ========================== */
 .cart-item {
@@ -212,47 +301,134 @@
 }
 
 .qty-btn {
-  width:28px;
-  height:28px;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: 1.5px solid #e4e4e7;
   transition: all .15s ease;
-  cursor:pointer;
-  background:white;
+  cursor: pointer;
+  background: white;
 }
 .qty-btn:hover:not(:disabled) {
-  border-color:#09090b;
-  background:#09090b;
-  color:white;
+  border-color: #09090b;
+  background: #09090b;
+  color: white;
 }
 .qty-btn:disabled {
-  opacity:.4;
-  cursor:not-allowed;
+  opacity: .4;
+  cursor: not-allowed;
 }
 
 .remove-btn {
   transition: all .18s ease;
 }
 .remove-btn:hover {
-  background:#fff1f2;
-  color:#ef4444;
-  transform:scale(1.05);
+  background: #fff1f2;
+  color: #ef4444;
+  transform: scale(1.05);
+}
+
+/* ==========================
+   Order Card
+========================== */
+.order-card {
+  border: 1.5px solid #f4f4f5;
+  transition: all .25s cubic-bezier(.16,1,.3,1);
+}
+.order-card:hover {
+  border-color: #e4e4e7;
+  box-shadow: 0 4px 20px rgba(0,0,0,.06);
+}
+
+.chevron-icon {
+  transition: transform .25s cubic-bezier(.16,1,.3,1);
+}
+.chevron-icon.open { transform: rotate(180deg); }
+
+/* ==========================
+   Payment Card
+========================== */
+.pay-card {
+  transition: all .2s cubic-bezier(.16,1,.3,1);
+  cursor: pointer;
+}
+.pay-card:hover { border-color: #09090b; }
+.pay-card.selected { 
+  border-color: #09090b; 
+  background: #09090b; 
+}
+.pay-card.selected .pay-label { color: white; }
+.pay-card.selected .pay-sub { color: rgba(255,255,255,.5); }
+.pay-card.selected .pay-icon { color: white; }
+
+/* ==========================
+   Brand Card
+========================== */
+.brand-card {
+  transition: all .28s cubic-bezier(.16,1,.3,1);
+  cursor: pointer;
+}
+.brand-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 50px rgba(0,0,0,.10);
+}
+.brand-card:hover .brand-logo {
+  transform: scale(1.06);
+}
+.brand-logo {
+  transition: transform .3s cubic-bezier(.16,1,.3,1);
+}
+.brand-card:hover .brand-arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+.brand-arrow {
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: all .2s ease;
+}
+.brand-card:hover .brand-shine {
+  opacity: 1;
+}
+.brand-shine {
+  opacity: 0;
+  transition: opacity .3s ease;
+  background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,.5) 50%, transparent 60%);
+  background-size: 200% auto;
+  animation: brandShimmer 1.2s linear infinite;
+}
+
+/* ==========================
+   Form Fields
+========================== */
+.field-input {
+  background: #fafafa;
+  border: 1.5px solid #e4e4e7;
+  border-radius: 12px;
+  height: 44px;
+  padding: 0 14px;
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  transition: all .15s ease;
+  outline: none;
+  width: 100%;
+  color: #09090b;
+}
+.field-input:focus { 
+  border-color: #09090b; 
+  background: white; 
+}
+.field-input.error { 
+  border-color: #ef4444; 
+  background: #fff5f5; 
 }
 
 /* ==========================
    Utilities
 ========================== */
-.cart-btn:hover {
-  background: #27272a;
-  transform: translateY(-1px);
-}
-.cart-btn:active {
-  transform: translateY(0);
-}
-
 .wish-btn:hover {
   transform: scale(1.08);
   background: #fef2f2;
@@ -275,4 +451,44 @@
   height: 2px;
   background: #000;
   display: block;
+}
+
+.section-divider-alt {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #e4e4e7 20%, #e4e4e7 80%, transparent);
+}
+
+/* ==========================
+   Hero Cover Pattern
+========================== */
+.cover-pattern {
+  background-color: #09090b;
+  background-image:
+    radial-gradient(circle at 20% 50%, rgba(255,255,255,.04) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255,255,255,.06) 0%, transparent 40%),
+    linear-gradient(#fff 1px, transparent 1px),
+    linear-gradient(90deg, #fff 1px, transparent 1px);
+  background-size: auto, auto, 28px 28px, 28px 28px;
+  background-blend-mode: normal, normal, overlay, overlay;
+}
+
+/* ==========================
+   Avatar Ring
+========================== */
+.avatar-ring {
+  position: relative;
+  border-radius: 50%;
+  padding: 3px;
+  background: linear-gradient(135deg, #fff 0%, #a1a1aa 50%, #fff 100%);
+  background-size: 200% 200%;
+}
+.avatar-ring::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: inherit;
+  filter: blur(6px);
+  opacity: .4;
+  z-index: -1;
 }

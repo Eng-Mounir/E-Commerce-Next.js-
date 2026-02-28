@@ -87,27 +87,6 @@ export default function CartPage() {
 
   return (
     <>
-      <style>{`
-        @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
-        @keyframes spin   { to{transform:rotate(360deg)} }
-        .spinner { animation: spin .7s linear infinite; }
-        .cart-item { transition: all .25s cubic-bezier(.16,1,.3,1); }
-        .cart-item:hover { background: #fafafa; }
-        .qty-btn {
-          width:28px; height:28px; border-radius:50%;
-          display:flex; align-items:center; justify-content:center;
-          border: 1.5px solid #e4e4e7;
-          transition: all .15s ease; cursor:pointer; background:white;
-        }
-        .qty-btn:hover:not(:disabled) { border-color:#09090b; background:#09090b; color:white; }
-        .qty-btn:disabled { opacity:.4; cursor:not-allowed; }
-        .remove-btn { transition: all .18s ease; }
-        .remove-btn:hover { background:#fff1f2; color:#ef4444; transform:scale(1.05); }
-        .lift { transition: transform .2s ease, box-shadow .2s ease; }
-        .lift:hover { transform:translateY(-2px); box-shadow:0 10px 28px rgba(0,0,0,.13); }
-        .img-wrap { transition: transform .25s cubic-bezier(.16,1,.3,1); }
-        .cart-item:hover .img-wrap { transform: scale(1.04); }
-      `}</style>
 
       <div className="dm bg-white min-h-screen">
 

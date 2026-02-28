@@ -95,25 +95,6 @@ export default function OrdersPage() {
 
   return (
     <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=DM+Sans:wght@300;400;500;600&display=swap');
-        .cg { font-family: 'Cormorant Garamond', serif; }
-        .dm { font-family: 'DM Sans', sans-serif; }
-
-        @keyframes fadeUp    { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
-        @keyframes skelPulse { 0%,100%{opacity:.07} 50%{opacity:.15} }
-
-        .a1 { animation: fadeUp .5s cubic-bezier(.16,1,.3,1) .05s both }
-        .a2 { animation: fadeUp .5s cubic-bezier(.16,1,.3,1) .15s both }
-        .skel { animation: skelPulse 1.8s ease-in-out infinite; background:#f4f4f5; border-radius:24px; }
-
-        .order-card { border: 1.5px solid #f4f4f5; transition: all .25s cubic-bezier(.16,1,.3,1); }
-        .order-card:hover { border-color:#e4e4e7; box-shadow:0 4px 20px rgba(0,0,0,.06); }
-        .chevron-icon { transition: transform .25s cubic-bezier(.16,1,.3,1); }
-        .chevron-icon.open { transform: rotate(180deg); }
-        .lift { transition: transform .2s ease, box-shadow .2s ease; }
-        .lift:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(0,0,0,.13); }
-      `}</style>
 
       <div className="dm bg-white min-h-screen">
 

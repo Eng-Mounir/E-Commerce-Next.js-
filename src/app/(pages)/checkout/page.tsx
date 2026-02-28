@@ -93,48 +93,7 @@ export default function CheckoutPage() {
 
   return (
     <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=DM+Sans:wght@300;400;500;600&display=swap');
-        .cg { font-family: 'Cormorant Garamond', serif; }
-        .dm { font-family: 'DM Sans', sans-serif; }
 
-        @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
-        @keyframes spin   { to{transform:rotate(360deg)} }
-        .a1{animation:fadeUp .5s cubic-bezier(.16,1,.3,1) .05s both}
-        .a2{animation:fadeUp .5s cubic-bezier(.16,1,.3,1) .15s both}
-        .a3{animation:fadeUp .5s cubic-bezier(.16,1,.3,1) .25s both}
-        .spinner{animation:spin .7s linear infinite}
-
-        .pay-card {
-          transition: all .2s cubic-bezier(.16,1,.3,1);
-          cursor: pointer;
-        }
-        .pay-card:hover { border-color: #09090b; }
-        .pay-card.selected { border-color: #09090b; background: #09090b; }
-        .pay-card.selected .pay-label { color: white; }
-        .pay-card.selected .pay-sub   { color: rgba(255,255,255,.5); }
-        .pay-card.selected .pay-icon  { color: white; }
-
-        .field-input {
-          background: #fafafa;
-          border: 1.5px solid #e4e4e7;
-          border-radius: 12px;
-          height: 44px;
-          padding: 0 14px;
-          font-size: 14px;
-          font-family: 'DM Sans', sans-serif;
-          transition: all .15s ease;
-          outline: none;
-          width: 100%;
-          color: #09090b;
-        }
-        .field-input:focus { border-color: #09090b; background: white; }
-        .field-input.error { border-color: #ef4444; background: #fff5f5; }
-
-        .lift { transition: transform .2s ease, box-shadow .2s ease; }
-        .lift:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(0,0,0,.13); }
-        .lift:active { transform: translateY(0); }
-      `}</style>
 
       <div className="dm bg-white min-h-screen">
 

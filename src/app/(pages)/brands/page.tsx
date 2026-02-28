@@ -39,57 +39,6 @@ export default async function BrandsPage() {
 
   return (
     <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=DM+Sans:wght@300;400;500;600&display=swap');
-        .cg { font-family: 'Cormorant Garamond', serif; }
-        .dm { font-family: 'DM Sans', sans-serif; }
-
-        @keyframes fadeUp   { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
-        @keyframes marquee  { from{transform:translateX(0)} to{transform:translateX(-50%)} }
-        @keyframes shimmer  { from{background-position:-200% center} to{background-position:200% center} }
-
-        .a1{animation:fadeUp .6s cubic-bezier(.16,1,.3,1) .05s both}
-        .a2{animation:fadeUp .6s cubic-bezier(.16,1,.3,1) .15s both}
-        .a3{animation:fadeUp .6s cubic-bezier(.16,1,.3,1) .25s both}
-        .mq{animation:marquee 28s linear infinite}
-
-        /* Brand card */
-        .brand-card {
-          transition: all .28s cubic-bezier(.16,1,.3,1);
-          cursor: pointer;
-        }
-        .brand-card:hover {
-          transform: translateY(-6px);
-          box-shadow: 0 20px 50px rgba(0,0,0,.10);
-        }
-        .brand-card:hover .brand-logo {
-          transform: scale(1.06);
-        }
-        .brand-logo {
-          transition: transform .3s cubic-bezier(.16,1,.3,1);
-        }
-        .brand-card:hover .brand-arrow {
-          opacity: 1;
-          transform: translateX(0);
-        }
-        .brand-arrow {
-          opacity: 0;
-          transform: translateX(-6px);
-          transition: all .2s ease;
-        }
-
-        /* Shimmer on hover */
-        .brand-card:hover .brand-shine {
-          opacity: 1;
-        }
-        .brand-shine {
-          opacity: 0;
-          transition: opacity .3s ease;
-          background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,.5) 50%, transparent 60%);
-          background-size: 200% auto;
-          animation: shimmer 1.2s linear infinite;
-        }
-      `}</style>
 
       <div className="dm bg-white min-h-screen">
 
