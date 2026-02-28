@@ -2,7 +2,7 @@ import {jwtDecode } from "jwt-decode";
 import { signInUser } from "@/services/auth.services";
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { decodedTokenType } from "@/app/interfaces/decodedTokenTypei";
+import { decodedTokenType } from "@/interfaces/decodedTokenTypei";
 
 const authOptions :NextAuthOptions = {
     pages:{

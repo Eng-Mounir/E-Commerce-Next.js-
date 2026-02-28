@@ -5,7 +5,7 @@ import Navbar from "./_components/common/navbar";
 import Footer from "./_components/common/footer";
 import { Toaster } from "sonner";
 import AuthProvider from "@/providers/auth-provider";
-
+ import CartContextProvider from "@/providers/cart-Provider";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -30,13 +30,19 @@ export default function RootLayout({
     <html lang="en">
 <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
   <AuthProvider>
+  <CartContextProvider>
+
     <Navbar />
-  <main className="min-h-screen space-y-4">
-    {children}
-  </main>
-  <Toaster position="top-center" richColors />
-  <Footer />
-  </AuthProvider>
+
+    <main className="min-h-screen space-y-4">
+      {children}
+    </main>
+
+    <Toaster position="top-center" richColors />
+    <Footer />
+
+  </CartContextProvider>
+</AuthProvider>
 </body>
     </html>
   );

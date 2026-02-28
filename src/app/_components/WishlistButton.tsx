@@ -33,15 +33,17 @@ export default function WishlistButton({ productId }: { productId: string }) {
     <button
       onClick={handleWishlist}
       disabled={loading}
-      className="wish-btn h-13 w-13 border-2 border-zinc-200 hover:border-rose-300 hover:bg-rose-50 rounded-2xl flex items-center justify-center transition-all disabled:opacity-50"
+      className={`h-13 w-13 border-2 rounded-2xl flex items-center justify-center transition-all active:scale-95 disabled:opacity-50 ${
+        isWishlisted
+          ? 'border-rose-300 bg-rose-50 hover:bg-rose-100'
+          : 'border-zinc-200 hover:border-rose-300 hover:bg-rose-50'
+      }`}
     >
       {loading
         ? <Spinner size="sm" className="text-zinc-400" />
         : <Heart
             size={20}
-            className={isWishlisted
-              ? 'fill-rose-500 text-rose-500'
-              : 'text-zinc-400'}
+            className={isWishlisted ? 'fill-rose-500 text-rose-500' : 'text-zinc-400'}
           />
       }
     </button>

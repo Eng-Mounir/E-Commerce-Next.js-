@@ -1,7 +1,7 @@
 "use client"
-import React, { useState } from 'react'
+
 import Link from 'next/link'
-import { usePathname,useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import {
   DropdownMenu, DropdownMenuTrigger, DropdownMenuContent,
   DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator
@@ -12,20 +12,25 @@ import {
   LogIn, UserPlus
 } from 'lucide-react'
 import { useSession, signOut } from "next-auth/react"
+import React, { useState, useContext } from 'react'
+import { cartContext } from '@/providers/cart-Provider'  // ✅ named import
 
 export default function Navbar() {
   const pathname = usePathname()
+  const router = useRouter()
   const [open, setOpen] = useState(false)
   const { data: session, status } = useSession()
 
   const isLoggedIn = status === "authenticated" && !!session?.user
   const userName = session?.user?.name ?? null
-// ✅ Added inside the component:
-const router = useRouter()
+
+  // ✅ Safe — context has a default value so it's never null
+  const { numberOfBoughtItems } = useContext(cartContext)
+
   async function handleLogout() {
-    await signOut({ redirect: false });  // clear session cookie only, no browser redirect
-    router.push('/login')     ;          // Next.js client-side navigation → page renders properly
-    router.refresh()           ;         // force server components to re-fetch (clears cached session state)
+    await signOut({ redirect: false })
+    router.push('/login')
+    router.refresh()
   }
 
   const isActive = (href: string) => pathname === href
@@ -35,7 +40,7 @@ const router = useRouter()
     { href: '/about',      label: 'About'      },
     { href: '/categories', label: 'Categories' },
     { href: '/products',   label: 'Products'   },
-    { href: '/brands',    label: 'Brands'    },
+    { href: '/brands',     label: 'Brands'     },
   ]
 
   const authMenuItems = [
@@ -77,6 +82,7 @@ const router = useRouter()
         .link-in-2 { animation: linkIn .5s cubic-bezier(.16,1,.3,1) .22s both; }
         .link-in-3 { animation: linkIn .5s cubic-bezier(.16,1,.3,1) .29s both; }
         .link-in-4 { animation: linkIn .5s cubic-bezier(.16,1,.3,1) .36s both; }
+        .link-in-5 { animation: linkIn .5s cubic-bezier(.16,1,.3,1) .43s both; }
 
         @keyframes iconIn {
           from { opacity:0; transform: translateX(12px); }
@@ -179,7 +185,7 @@ const router = useRouter()
           {/* ── Right actions ── */}
           <div className="flex items-center gap-1.5 shrink-0">
 
-            {/* Wishlist — logged in only */}
+            {/* Wishlist */}
             {isLoggedIn && (
               <Link
                 href="/wishList"
@@ -189,16 +195,18 @@ const router = useRouter()
               </Link>
             )}
 
-            {/* Cart — logged in only */}
+            {/* Cart with live badge */}
             {isLoggedIn && (
               <Link
                 href="/cart"
                 className="icon-in-2 icon-bounce relative w-9 h-9 rounded-full flex items-center justify-center text-zinc-500 hover:text-blue-500 hover:bg-blue-50 transition-colors duration-150"
               >
                 <ShoppingCart size={17} />
-                <span className="badge-pop absolute -top-0.5 -right-0.5 w-4 h-4 bg-zinc-950 text-white text-[9px] font-bold rounded-full flex items-center justify-center leading-none">
-                  3
-                </span>
+                {numberOfBoughtItems > 0 && (
+                  <span className="badge-pop absolute -top-0.5 -right-0.5 min-w-[16px] h-4 bg-zinc-950 text-white text-[9px] font-bold rounded-full flex items-center justify-center leading-none px-1">
+                    {numberOfBoughtItems > 99 ? '99+' : numberOfBoughtItems}
+                  </span>
+                )}
               </Link>
             )}
 
@@ -230,9 +238,8 @@ const router = useRouter()
                   align="end"
                   sideOffset={6}
                 >
-
                   {/* Header */}
-                  <div className="item-1 bg-linear-to-br from-zinc-50 to-zinc-100 border border-zinc-200/70 rounded-2xl px-4 py-3.5 mb-1.5 flex items-center gap-3">
+                  <div className="item-1 bg-gradient-to-br from-zinc-50 to-zinc-100 border border-zinc-200/70 rounded-2xl px-4 py-3.5 mb-1.5 flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-white border border-zinc-200 shadow-sm flex items-center justify-center shrink-0">
                       {isLoggedIn && getInitial(userName) ? (
                         <span className="text-lg font-bold text-zinc-700 leading-none">
@@ -252,7 +259,6 @@ const router = useRouter()
                     </div>
                   </div>
 
-                  {/* Conditional menu items */}
                   {isLoggedIn ? (
                     <>
                       <DropdownMenuGroup>
@@ -313,11 +319,9 @@ const router = useRouter()
                       ))}
                     </DropdownMenuGroup>
                   )}
-
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
-
           </div>
         </div>
       </nav>

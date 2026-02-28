@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -17,7 +17,8 @@ import {
   clearUserCart,
   updateCartQuantity,
 } from '@/actions/cart.action'
-import { Cart } from '@/app/interfaces/cart'
+import { Cart } from '@/interfaces/cart'
+import { cartContext } from '@/providers/cart-Provider'
 
 export default function CartPage() {
   const router = useRouter()
@@ -27,6 +28,9 @@ export default function CartPage() {
   const [removing, setRemoving] = useState<string | null>(null)
   const [updating, setUpdating] = useState<string | null>(null)
   const [clearing, setClearing] = useState(false)
+
+  // ✅ Get badge refresh function from context
+  const { getNumberOfBoughtItems } = useContext(cartContext)
 
   /* ── Fetch on mount ── */
   useEffect(() => {
@@ -43,6 +47,7 @@ export default function CartPage() {
     if (updated) {
       setCart(updated)
       toast.success('Item removed from cart')
+      await getNumberOfBoughtItems() // ✅ update badge
     } else {
       toast.error('Failed to remove item')
     }
@@ -56,6 +61,7 @@ export default function CartPage() {
     if (ok) {
       setCart(null)
       toast.success('Cart cleared')
+      await getNumberOfBoughtItems() // ✅ update badge → 0
     } else {
       toast.error('Failed to clear cart')
     }
@@ -68,8 +74,12 @@ export default function CartPage() {
     if (next < 1) return
     setUpdating(cartItemId)
     const updated = await updateCartQuantity(productId, next)
-    if (updated) setCart(updated)
-    else toast.error('Failed to update quantity')
+    if (updated) {
+      setCart(updated)
+      await getNumberOfBoughtItems() // ✅ update badge on +/-
+    } else {
+      toast.error('Failed to update quantity')
+    }
     setUpdating(null)
   }
 
@@ -77,6 +87,28 @@ export default function CartPage() {
 
   return (
     <>
+      <style>{`
+        @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes spin   { to{transform:rotate(360deg)} }
+        .spinner { animation: spin .7s linear infinite; }
+        .cart-item { transition: all .25s cubic-bezier(.16,1,.3,1); }
+        .cart-item:hover { background: #fafafa; }
+        .qty-btn {
+          width:28px; height:28px; border-radius:50%;
+          display:flex; align-items:center; justify-content:center;
+          border: 1.5px solid #e4e4e7;
+          transition: all .15s ease; cursor:pointer; background:white;
+        }
+        .qty-btn:hover:not(:disabled) { border-color:#09090b; background:#09090b; color:white; }
+        .qty-btn:disabled { opacity:.4; cursor:not-allowed; }
+        .remove-btn { transition: all .18s ease; }
+        .remove-btn:hover { background:#fff1f2; color:#ef4444; transform:scale(1.05); }
+        .lift { transition: transform .2s ease, box-shadow .2s ease; }
+        .lift:hover { transform:translateY(-2px); box-shadow:0 10px 28px rgba(0,0,0,.13); }
+        .img-wrap { transition: transform .25s cubic-bezier(.16,1,.3,1); }
+        .cart-item:hover .img-wrap { transform: scale(1.04); }
+      `}</style>
+
       <div className="dm bg-white min-h-screen">
 
         {/* ── Header ── */}
@@ -86,11 +118,11 @@ export default function CartPage() {
           <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-16 py-12">
             <button
               onClick={() => router.back()}
-              className="a1 flex items-center gap-2 text-white/40 hover:text-white/70 text-[12px] font-medium mb-6 transition-colors"
+              className="flex items-center gap-2 text-white/40 hover:text-white/70 text-[12px] font-medium mb-6 transition-colors"
             >
               <ArrowLeft size={13} /> Back
             </button>
-            <div className="a1 flex items-center gap-2 mb-4">
+            <div className="flex items-center gap-2 mb-4">
               <div className="flex items-center gap-1.5 bg-white/8 border border-white/10 rounded-full px-3 py-1.5">
                 <ShoppingCart size={11} className="text-white/50" />
                 <span className="text-[10px] font-bold tracking-[.18em] uppercase text-white/40">
@@ -98,7 +130,7 @@ export default function CartPage() {
                 </span>
               </div>
             </div>
-            <h1 className="a2 cg text-[clamp(2.8rem,5vw,4.5rem)] font-bold text-white leading-[.95] tracking-tight">
+            <h1 className="cg text-[clamp(2.8rem,5vw,4.5rem)] font-bold text-white leading-[.95] tracking-tight">
               Your<br /><span className="italic text-white/30">Cart.</span>
             </h1>
           </div>
@@ -255,7 +287,7 @@ export default function CartPage() {
               </div>
 
               {/* ── Order summary ── */}
-              <div className="a3 w-full lg:w-80 shrink-0">
+              <div className="w-full lg:w-80 shrink-0">
                 <div className="border border-zinc-100 rounded-3xl overflow-hidden sticky top-20">
                   <div className="bg-zinc-950 px-6 py-5">
                     <p className="text-[10px] font-bold tracking-[.18em] uppercase text-white/40 mb-1">Order Summary</p>

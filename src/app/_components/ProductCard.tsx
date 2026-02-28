@@ -3,19 +3,23 @@
 import { ShoppingCart, Heart, Star } from 'lucide-react';
 import Image from 'next/image';
 import { Card } from '@/components/ui/card';
-import { ProductI } from '@/app/interfaces';
+import { ProductI } from '@/interfaces';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { addToCart } from '@/actions/cart.action';
 import { addToWishlist, removeFromWishlist } from '@/actions/wishList.action';
 import { Spinner } from '@/components/ui/spinner';
 import { toast } from 'sonner';
+import { cartContext } from '@/providers/cart-Provider';
 
 export default function ProductCard({ product }: { product: ProductI }) {
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [wishlistLoading, setWishlistLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+
+  // ✅ Pull refresh function from cart context to update navbar badge
+  const { getNumberOfBoughtItems } = useContext(cartContext);
 
   const renderStars = (rating: number) =>
     Array.from({ length: 5 }).map((_, i) => (
@@ -33,9 +37,12 @@ export default function ProductCard({ product }: { product: ProductI }) {
     setIsLoading(true);
     try {
       const result = await addToCart(product._id);
-      result.success
-        ? toast.success('Added to cart!')
-        : toast.error('Failed to add to cart');
+      if (result.success) {
+        toast.success('Added to cart!');
+        await getNumberOfBoughtItems(); // ✅ refresh navbar badge
+      } else {
+        toast.error('Failed to add to cart');
+      }
     } catch {
       toast.error('Something went wrong');
     } finally {
@@ -84,7 +91,7 @@ export default function ProductCard({ product }: { product: ProductI }) {
         <button
           onClick={handleWishlist}
           disabled={wishlistLoading}
-          className="wish-btn absolute top-3 right-3 w-9 h-9 bg-white/95 backdrop-blur rounded-xl flex items-center justify-center shadow-md"
+          className="wish-btn absolute top-3 right-3 w-9 h-9 bg-white/95 backdrop-blur rounded-xl flex items-center justify-center shadow-md transition-transform hover:scale-110 active:scale-95"
         >
           {wishlistLoading
             ? <Spinner size="sm" className="text-zinc-400" />
@@ -126,7 +133,7 @@ export default function ProductCard({ product }: { product: ProductI }) {
           <button
             disabled={isLoading}
             onClick={handleAddToCart}
-            className="cart-btn w-11 h-11 bg-zinc-950 rounded-2xl flex items-center justify-center shadow-sm"
+            className="w-11 h-11 bg-zinc-950 hover:bg-zinc-800 active:scale-95 rounded-2xl flex items-center justify-center shadow-sm transition-all"
           >
             {isLoading
               ? <Spinner size="sm" className="text-white" />
@@ -140,7 +147,7 @@ export default function ProductCard({ product }: { product: ProductI }) {
           <button
             disabled={isLoading}
             onClick={handleAddToCart}
-            className="cart-btn w-full h-10 bg-zinc-950 hover:bg-zinc-800 text-white rounded-xl flex items-center justify-center gap-2 text-[12px] font-bold tracking-wide mt-1"
+            className="w-full h-10 bg-zinc-950 hover:bg-zinc-800 active:scale-95 text-white rounded-xl flex items-center justify-center gap-2 text-[12px] font-bold tracking-wide mt-1 transition-all"
           >
             {isLoading
               ? <Spinner size="sm" className="text-white" />

@@ -1,6 +1,6 @@
 "use server";
 
-import { Cart } from "@/app/interfaces/cart";
+import { Cart } from "@/interfaces/cart";
 import { getToken } from "@/lib/auth";
 
 

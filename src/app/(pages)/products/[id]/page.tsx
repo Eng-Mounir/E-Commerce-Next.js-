@@ -5,7 +5,7 @@ import { Heart, Star, Package, Truck, ShieldCheck, RotateCcw, Award, Sparkles, C
 import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
-import { ProductDetailPageProps } from '@/app/interfaces';
+import { ProductDetailPageProps } from '@/interfaces';
 import AddToCartButton from "@/app/_components/AddToCartButton";
 import WishlistButton from "@/app/_components/WishlistButton";
 
