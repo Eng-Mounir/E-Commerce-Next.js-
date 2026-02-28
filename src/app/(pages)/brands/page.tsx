@@ -97,8 +97,8 @@ export default async function BrandsPage() {
         <div className="relative bg-zinc-950 overflow-hidden">
           <div className="pointer-events-none absolute inset-0 opacity-[.05]"
             style={{backgroundImage:'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)',backgroundSize:'24px 24px'}} />
-          <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[160px] bg-white/5 rounded-full blur-3xl" />
-          <div className="pointer-events-none absolute -top-10 -right-10 w-[40vw] h-[120%] bg-white/[.02]"
+          <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-125 h-40 bg-white/5 rounded-full blur-3xl" />
+          <div className="pointer-events-none absolute -top-10 -right-10 w-[40vw] h-[120%] bg-white/2"
             style={{clipPath:'polygon(0 0,100% 0,100% 70%,0 100%)'}} />
 
           <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-16 py-16">

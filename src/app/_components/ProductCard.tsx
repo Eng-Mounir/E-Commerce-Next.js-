@@ -85,7 +85,7 @@ export default function ProductCard({ product }: { product: ProductI }) {
           className="object-cover"
         />
 
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
 
         {/* Wishlist button */}
         <button

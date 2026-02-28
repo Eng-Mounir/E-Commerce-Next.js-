@@ -1,10 +1,10 @@
 import React from 'react'
 import { RootLayoutProps } from '@/app/layout'
-import Link from 'next/link'
+// import Link from 'next/link'
 export default function layout({ children }:RootLayoutProps) {
   return (
     <div className="grid grid-cols-5 min-h-screen bg-gray-100">
-        <div className='col-span-1 bg-white p-4 shadow-md'>
+        {/* <div className='col-span-1 bg-white p-4 shadow-md'>
             <aside>
                 <ul>
                     <li>
@@ -18,8 +18,8 @@ export default function layout({ children }:RootLayoutProps) {
                     </li>
                 </ul>
             </aside>
-        </div>
-        <div className="col-span-4">
+        </div> */}
+        <div className="col-span-5">
              {children}
         </div>
     </div>

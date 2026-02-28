@@ -203,7 +203,7 @@ export default function Navbar() {
               >
                 <ShoppingCart size={17} />
                 {numberOfBoughtItems > 0 && (
-                  <span className="badge-pop absolute -top-0.5 -right-0.5 min-w-[16px] h-4 bg-zinc-950 text-white text-[9px] font-bold rounded-full flex items-center justify-center leading-none px-1">
+                  <span className="badge-pop absolute -top-0.5 -right-0.5 min-w-4 h-4 bg-zinc-950 text-white text-[9px] font-bold rounded-full flex items-center justify-center leading-none px-1">
                     {numberOfBoughtItems > 99 ? '99+' : numberOfBoughtItems}
                   </span>
                 )}
@@ -239,7 +239,7 @@ export default function Navbar() {
                   sideOffset={6}
                 >
                   {/* Header */}
-                  <div className="item-1 bg-gradient-to-br from-zinc-50 to-zinc-100 border border-zinc-200/70 rounded-2xl px-4 py-3.5 mb-1.5 flex items-center gap-3">
+                  <div className="item-1 bg-linear-to-br from-zinc-50 to-zinc-100 border border-zinc-200/70 rounded-2xl px-4 py-3.5 mb-1.5 flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-white border border-zinc-200 shadow-sm flex items-center justify-center shrink-0">
                       {isLoggedIn && getInitial(userName) ? (
                         <span className="text-lg font-bold text-zinc-700 leading-none">

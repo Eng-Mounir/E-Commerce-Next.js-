@@ -1,7 +1,7 @@
 import { fetchProductById } from '@/services/product.services';
 import ImageCarousel from '@/app/_components/ImageCarousel';
 import Breadcrumb from '@/app/_components/Breadcrumb';
-import { Heart, Star, Package, Truck, ShieldCheck, RotateCcw, Award, Sparkles, ChevronRight } from 'lucide-react';
+import {  Star, Package, Truck, ShieldCheck, RotateCcw, Award, Sparkles, ChevronRight } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';

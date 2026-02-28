@@ -98,7 +98,7 @@ export default function Loading() {
         .pulse-logo { animation: pulseGlow 2s ease-in-out infinite; }
       `}</style>
 
-      <div className="dm fixed inset-0 bg-white z-[9999] flex flex-col">
+      <div className="dm fixed inset-0 bg-white z-9999 flex flex-col">
 
         {/* ── Background decorations ── */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -109,7 +109,7 @@ export default function Loading() {
           <div className="absolute -top-10 -right-10 w-[40vw] h-[50vh] bg-zinc-950 opacity-[.03]"
             style={{clipPath:'polygon(0 0,100% 0,100% 70%,0 100%)'}} />
           {/* Soft glow center */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-zinc-100 rounded-full blur-3xl opacity-60" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-150 h-100 bg-zinc-100 rounded-full blur-3xl opacity-60" />
         </div>
 
         {/* ── Top progress bar ── */}

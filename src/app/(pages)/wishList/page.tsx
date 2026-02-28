@@ -116,7 +116,7 @@ export default function WishlistPage() {
         <div className="relative bg-zinc-950 overflow-hidden">
           <div className="pointer-events-none absolute inset-0 opacity-[.05]"
             style={{backgroundImage:'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)',backgroundSize:'24px 24px'}} />
-          <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[160px] bg-white/5 rounded-full blur-3xl" />
+          <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-125 h-40 bg-white/5 rounded-full blur-3xl" />
 
           <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-16 py-14">
             <button
@@ -158,7 +158,7 @@ export default function WishlistPage() {
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
               {Array(8).fill(0).map((_, i) => (
                 <div key={i} className="flex flex-col gap-3" style={{animationDelay:`${i*0.08}s`}}>
-                  <div className="skel w-full aspect-[3/4] bg-zinc-100 rounded-3xl" />
+                  <div className="skel w-full aspect-3/4 bg-zinc-100 rounded-3xl" />
                   <div className="skel h-3 bg-zinc-100 rounded-full w-3/4" />
                   <div className="skel h-3 bg-zinc-100 rounded-full w-1/2" />
                 </div>
@@ -220,7 +220,7 @@ export default function WishlistPage() {
                     style={{ animation: `fadeUp .5s cubic-bezier(.16,1,.3,1) ${i * 0.05}s both` }}
                   >
                     {/* Image */}
-                    <div className="card-img relative w-full aspect-[4/3] bg-zinc-50 overflow-hidden">
+                    <div className="card-img relative w-full aspect-4/3 bg-zinc-50 overflow-hidden">
                       <Image
                         src={product.imageCover}
                         alt={product.title}
