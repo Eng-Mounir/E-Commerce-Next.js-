@@ -36,7 +36,6 @@ export interface Order {
   createdAt: string;
 }
 
-/* ── Helper: extract array from any response shape ── */
 function extractArray(data: any): Order[] {
   if (!data) return []
   if (Array.isArray(data)) return data              // bare array

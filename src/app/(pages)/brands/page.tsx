@@ -1,41 +1,10 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import { Sparkles, ArrowRight, Award } from 'lucide-react'
-
-interface Brand {
-  _id: string
-  name: string
-  slug: string
-  image: string
-  createdAt: string
-  updatedAt: string
-}
-
-interface BrandsResponse {
-  results: number
-  metadata: {
-    currentPage: number
-    numberOfPages: number
-    limit: number
-    nextPage?: number
-  }
-  data: Brand[]
-}
-
-async function fetchBrands(): Promise<Brand[]> {
-  try {
-    const pages = await Promise.all([
-      fetch('https://ecommerce.routemisr.com/api/v1/brands?page=1', { next: { revalidate: 3600 } }),
-      fetch('https://ecommerce.routemisr.com/api/v1/brands?page=2', { next: { revalidate: 3600 } }),
-    ])
-    const [data1, data2]: BrandsResponse[] = await Promise.all(pages.map(p => p.json()))
-    return [...(data1.data || []), ...(data2.data || [])]
-  } catch {
-    return []
-  }
-}
+import { getAllBrands } from '@/actions/brands.action'
 
 export default async function BrandsPage() {
-  const brands = await fetchBrands()
+  const brands = await getAllBrands()
 
   return (
     <>
@@ -46,8 +15,8 @@ export default async function BrandsPage() {
         <div className="relative bg-zinc-950 overflow-hidden">
           <div className="pointer-events-none absolute inset-0 opacity-[.05]"
             style={{backgroundImage:'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)',backgroundSize:'24px 24px'}} />
-          <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-125 h-40 bg-white/5 rounded-full blur-3xl" />
-          <div className="pointer-events-none absolute -top-10 -right-10 w-[40vw] h-[120%] bg-white/2"
+          <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-40 bg-white/5 rounded-full blur-3xl" />
+          <div className="pointer-events-none absolute -top-10 -right-10 w-[40vw] h-[120%] bg-white/[.02]"
             style={{clipPath:'polygon(0 0,100% 0,100% 70%,0 100%)'}} />
 
           <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-16 py-16">
@@ -61,7 +30,6 @@ export default async function BrandsPage() {
                 <span className="text-[10px] font-bold tracking-[.18em] uppercase text-white/40">{brands.length}+ Brands</span>
               </div>
             </div>
-
             <h1 className="a2 cg text-[clamp(3rem,6vw,5.5rem)] font-bold text-white leading-[.95] tracking-tight mb-4">
               Our<br /><span className="italic text-white/30">Brands.</span>
             </h1>
@@ -73,7 +41,7 @@ export default async function BrandsPage() {
           {/* Marquee */}
           <div className="border-t border-white/8 py-3 overflow-hidden">
             <div className="mq flex whitespace-nowrap text-white/20 text-[10px] font-bold tracking-[.22em] uppercase">
-              {Array(8).fill(brands.slice(0, 8).map(b => b.name)).flat().map((name, i) => (
+              {Array(8).fill(brands.slice(0, 8).map(b => b.name)).flat().map((name: string, i: number) => (
                 <span key={i} className="shrink-0 px-5">{name} &nbsp;·&nbsp;</span>
               ))}
             </div>
@@ -82,16 +50,16 @@ export default async function BrandsPage() {
 
         {/* ── Brands Grid ── */}
         <div className="max-w-7xl mx-auto px-6 lg:px-16 py-16">
-
-          {/* Count bar */}
           <div className="flex items-center justify-between mb-10">
             <div>
               <p className="text-[11px] font-bold tracking-[.18em] uppercase text-zinc-400 mb-1">Showing all</p>
-              <p className="cg text-3xl font-bold text-zinc-900">{brands.length} <span className="italic text-zinc-400">Brands</span></p>
+              <p className="cg text-3xl font-bold text-zinc-900">
+                {brands.length} <span className="italic text-zinc-400">Brands</span>
+              </p>
             </div>
             <div className="hidden sm:flex items-center gap-2 text-[11px] text-zinc-400 font-medium">
               <span className="w-2 h-2 rounded-full bg-green-500 inline-block" />
-              All brands in stock
+              All brands available
             </div>
           </div>
 
@@ -106,22 +74,23 @@ export default async function BrandsPage() {
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
               {brands.map((brand, i) => (
-                <div
+                <Link
                   key={brand._id}
+                  href={`/brands/${brand._id}`}
                   className="brand-card group bg-white border border-zinc-100 rounded-3xl p-5 flex flex-col items-center gap-3 relative overflow-hidden"
                   style={{ animationDelay: `${i * 0.03}s` }}
                 >
-                  {/* Shine overlay */}
+                  {/* Shine */}
                   <div className="brand-shine absolute inset-0 pointer-events-none z-10" />
 
-                  {/* Image */}
+                  {/* Logo */}
                   <div className="w-full aspect-square bg-zinc-50 rounded-2xl flex items-center justify-center overflow-hidden p-3">
                     <div className="brand-logo relative w-full h-full">
                       <Image
                         src={brand.image}
                         alt={brand.name}
                         fill
-                        sizes="(max-width: 640px) 40vw, (max-width: 1024px) 20vw, 14vw"
+                        sizes="(max-width:640px) 40vw,(max-width:1024px) 20vw,14vw"
                         className="object-contain"
                       />
                     </div>
@@ -134,12 +103,11 @@ export default async function BrandsPage() {
                     </p>
                     <ArrowRight size={13} className="brand-arrow text-zinc-400 shrink-0 ml-1" />
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           )}
         </div>
-
       </div>
     </>
   )
