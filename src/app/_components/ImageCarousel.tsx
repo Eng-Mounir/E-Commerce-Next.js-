@@ -1,8 +1,8 @@
-"use client"
+﻿"use client";
 
-import * as React from "react"
-import Image from "next/image"
-import Autoplay from "embla-carousel-autoplay"
+import * as React from "react";
+import Image from "next/image";
+import Autoplay from "embla-carousel-autoplay";
 import {
   Carousel,
   CarouselContent,
@@ -10,68 +10,46 @@ import {
   CarouselNext,
   CarouselPrevious,
   type CarouselApi,
-} from "@/components/ui/carousel"
+} from "@/components/ui/carousel";
 
 interface ImageCarouselProps {
-  images: string[]
-  title: string
+  images: string[];
+  title: string;
 }
 
 export default function ImageCarousel({ images, title }: ImageCarouselProps) {
   const plugin = React.useRef(
     Autoplay({ delay: 4000, stopOnInteraction: true })
-  )
-  const [api, setApi] = React.useState<CarouselApi>()
-  const [current, setCurrent] = React.useState(0)
-  const [count, setCount] = React.useState(0)
+  );
+  const [api, setApi] = React.useState<CarouselApi>();
+  const [current, setCurrent] = React.useState(0);
+  const [count, setCount] = React.useState(0);
 
   React.useEffect(() => {
-    if (!api) return
+    if (!api) return;
 
-    setCount(images.length)
+    setCount(images.length);
 
     const onSelect = () => {
-      // Get the selected index from the carousel API
-      // Try different methods to ensure we get the correct index
-      let selectedIndex = 0
-      
-      try {
-        // Method 1: Try direct selectedIndex property
-        if (typeof api.selectedIndex === 'number') {
-          selectedIndex = api.selectedIndex
-        } 
-        // Method 2: Use scroll position if available
-        else if (api.scrollProgress && typeof api.scrollProgress === 'function') {
-          const progress = api.scrollProgress()
-          selectedIndex = Math.round(progress * (images.length - 1))
-        }
-        // Method 3: Fallback to checking scroll snaps
-        else if (api.scrollSnapList && typeof api.scrollSnapList === 'function') {
-          const snapList = api.scrollSnapList()
-          selectedIndex = snapList.length > 0 ? Math.min(snapList.length - 1, Math.round(api.scrollProgress?.() || 0 * (snapList.length - 1))) : 0
-        }
-      } catch (e) {
-        console.debug("Error getting selectedIndex:", e)
-        selectedIndex = 0
-      }
+      // Get the selected index using the correct Embla API method
+      const selectedIndex = api.selectedScrollSnap();
+      setCurrent(Math.max(0, Math.min(selectedIndex, images.length - 1)));
+    };
 
-      setCurrent(Math.max(0, Math.min(selectedIndex, images.length - 1)))
-    }
-
-    onSelect()
-    api.on("select", onSelect)
+    onSelect();
+    api.on("select", onSelect);
 
     return () => {
-      api.off("select", onSelect)
-    }
-  }, [api, images.length])
+      api.off("select", onSelect);
+    };
+  }, [api, images.length]);
 
   const scrollToIndex = (index: number) => {
-    plugin.current.stop()
+    plugin.current.stop();
     if (api) {
-      api.scrollTo(index)
+      api.scrollTo(index);
     }
-  }
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -139,5 +117,5 @@ export default function ImageCarousel({ images, title }: ImageCarouselProps) {
         </div>
       )}
     </div>
-  )
+  );
 }
