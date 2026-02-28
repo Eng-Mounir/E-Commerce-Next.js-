@@ -74,7 +74,7 @@ const {
     setShowPassword((prev) => !prev);
   };
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: any) => {
     console.log("Form Submitted", data);
     const response = await signUpUser(data);
     console.log("API Response:", response);
@@ -86,7 +86,7 @@ const {
     }
   };
 
-  const inputClass = (hasError) =>
+  const inputClass = (hasError: boolean) =>
     `bg-zinc-50 border text-zinc-900 placeholder:text-zinc-400 rounded-lg h-11 px-4 text-sm font-medium transition-all duration-200 focus:ring-2 focus:ring-black/8 focus:border-zinc-400 focus-visible:ring-black/8 focus-visible:ring-offset-0 ${
       hasError
         ? "border-red-300 bg-red-50/60 focus:border-red-400"
