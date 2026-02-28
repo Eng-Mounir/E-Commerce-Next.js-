@@ -1,16 +1,20 @@
-import { Loader2Icon } from "lucide-react"
+﻿"use client";
 
-import { cn } from "@/lib/utils"
+import { Audio } from 'react-loader-spinner';
 
-function Spinner({ className, ...props }: React.ComponentProps<"svg">) {
+export function Spinner({ size = 15, className = "" }) {
+  // Convert number size to appropriate format for the spinner
+  const spinnerSize = typeof size === 'number' ? size : 15;
+  
   return (
-    <Loader2Icon
-      role="status"
-      aria-label="Loading"
-      className={cn("size-4 animate-spin", className)}
-      {...props}
+    <Audio
+      height={spinnerSize}
+      width={spinnerSize}
+      color="#000000"
+      ariaLabel="loading"
+      wrapperStyle={{}}
+      wrapperClass={className}
+      visible={true}
     />
-  )
+  );
 }
-
-export { Spinner }
